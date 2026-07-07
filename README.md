@@ -1,7 +1,9 @@
-# GlazeSmith 🏺
+# GlazeSmith
 
-> AI agent for ceramic glaze formulation and defect diagnosis.
+> Hybrid computational engine for evaluating ceramic glaze stability.
 > Built for the AMD Unicorn Track Hackathon — AMD ROCm MI300X + Fireworks AI.
+
+A 5-layer decoupled system: deterministic physics (CTE), graph neural network (surface/transparency/color), Pareto optimization, SDXL visualization, and LLM interpretation.
 
 ## Team
 
@@ -26,7 +28,7 @@ cd frontend && npm install && npm run dev
 
 ## Docs
 
-- `ARCHITECTURE.md` — Full system specification
+- `ARCHITECTURE.md` — Full system specification (5-layer decoupled architecture)
 - `tasks/teammate-1-fullstack.md` — Full-stack task brief
 - `tasks/teammate-2-ml-engineer.md` — ML engineer task brief
 - `tasks/teammate-3-gen-ai-engineer.md` — Gen AI engineer task brief

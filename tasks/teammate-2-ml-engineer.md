@@ -1,72 +1,71 @@
-# Teammate 2: Material Science ML Engineer (GNN & Physics)
+# Teammate 2: Material Science ML Engineer (GNN & Data)
 
 ## Role
 
-Own data engineering on GlazyBench, GNN architecture development, and local PyTorch deployment on AMD ROCm.
+Own Layer 2 (GNN inference module) and Layer 1 physics integration. The GNN is trained strictly on GlazyBench's actual label space — surface finish, transparency, and color family. CTE and crazing are handled by deterministic physics (Layer 1), not ML.
 
 ## Core Tasks
 
 ### Day 1 — Data Prep & Environment Setup
 
-- **ROCm environment:** Verify PyTorch + ROCm 7.0 stack. Run `torch.cuda.is_available()` check. Install PyTorch Geometric (`torch-geometric`).
-- **GlazyBench acquisition:** Clone dataset from Hugging Face (`glazy/glazybench`). Explore schema: recipes, oxide compositions, UMF matrices, firing params, property labels (CTE, crazing, surface, transparency, color).
-- **UMF → PyTorch Geometric graph:** Write `gnn/data_utils.py` that converts each normalized UMF matrix into a `torch_geometric.data.Data` object:
-  - Nodes: 7 oxide nodes (SiO₂, Al₂O₃, Na₂O, K₂O, CaO, MgO, Fe₂O₃) with features [mol%, role_one_hot, atomic_mass, electronegativity]
-  - Edges: Fully connected, edge features [bond_type_one_hot, electronegativity_diff]
-  - Targets: CTE (float), crazing (binary), surface (4-class), transparency (3-class)
+- **ROCm environment:** Verify PyTorch + ROCm stack. Run `torch.cuda.is_available()`. Install PyTorch Geometric.
+- **GlazyBench acquisition:** Clone from Hugging Face (`glazy/glazybench`). Explore schema: recipes, UMF matrices, firing params, property labels (surface, transparency, color). Note: GlazyBench does NOT contain CTE or crazing labels — those are handled by deterministic physics in Layer 1.
+- **UMF → PyTorch Geometric graph:** Build graph conversion:
+  - Nodes: 7 oxide nodes (SiO₂, Al₂O₃, Na₂O, K₂O, CaO, MgO, Fe₂O₃)
+  - Features: [mol%, role_one_hot(4), atomic_mass/100]
+  - Edges: Fully connected
+  - Targets: Surface (9-class), transparency (4-class), color family (9-class)
 
 #### Files to touch
 - `gnn/model.py`
 - `gnn/train.py`
-- `backend/training/data_utils.py`
+- `backend/app/models/dataset.py`
 
 ### Day 2 — GNN Architecture & Training
 
-- **GIN architecture:** Implement a 3-layer Graph Isomorphism Network in `gnn/model.py`:
-  - `GINConv` layers with MLP (hidden_dim=128)
-  - BatchNorm after each conv
-  - Dropout(0.15)
+- **GIN architecture** in `gnn/model.py`:
+  - 3× GINConv (hidden_dim=128) + BatchNorm + Dropout(0.15)
   - Global mean + max pooling
-  - Multi-head output: regression head (CTE), binary head (crazing), 4-class head (surface)
-- **Training loop:** Train for 50+ epochs on the GlazyBench split. Log loss per head. Use AdamW (lr=1e-3, weight_decay=1e-5). Track validation metrics.
-- **Loss functions:** MSE for CTE, BCE for crazing, CrossEntropy for surface.
+  - Multi-head output: surface (9-class), transparency (4-class), color family (9-class)
+  - **No CTE or crazing heads** — those are deterministic (Layer 1)
+- **Training:** 50+ epochs on GlazyBench split. CrossEntropy loss per head. AdamW (lr=1e-3).
+- **Tabular baselines:** Implement XGBoost and CatBoost baselines for comparison (per GlazyBench paper methodology, Section 4.1.1).
 
 #### Files to touch
 - `gnn/model.py`
 - `gnn/train.py`
+- `gnn/baselines.py`
 
-### Day 3 — Model Serialization & Inference Script
+### Day 3 — Model Serialization & Inference
 
-- **Export:** Save trained weights as `gnn/glaze_gnn_state.pt` (state dict only).
-- **Inference wrapper:** Write `gnn/inference.py` that:
-  - Loads weights into VRAM (on ROCm device)
-  - Accepts raw UMF matrix (list of floats)
-  - Builds the graph on-the-fly
-  - Returns `[cte_float, crazing_prob, surface_logits]` in under 50ms
-- **Integration:** Place the inference script where the FastAPI backend can import it (`backend/app/gnn_predict.py` or similar).
-- **Validation:** Compare predictions against known glaze formulations (e.g., Leach 4321 Clear should have CTE ~6.5 ×10⁻⁶/°C).
+- **Export:** Save trained weights as `gnn/glaze_gnn_state.pt`
+- **Inference wrapper** (`gnn/inference.py`):
+  - Loads weights into VRAM (ROCm device)
+  - Accepts UMF array → builds graph → returns surface class + confidence, transparency class + confidence, color family
+  - Target: <50ms per prediction on MI300X
+- **CTE physics module:** Collaborate with Teammate 1 on `backend/app/physics/cte.py` for deterministic Appen-coefficient CTE estimation.
 
 #### Files to touch
 - `gnn/inference.py`
-- `backend/training/train_gnn.py`
+- `backend/app/physics/cte.py`
 
 ### Day 4 — Testing & Robustness
 
 - **Edge case tests:**
-  - Pure SiO₂ (should be very low CTE, no crazing)
-  - Pure Nepheline Syenite (should be high CTE, high crazing risk)
-  - Extremely high Al₂O₃ (should predict matte surface)
-- **Performance:** Benchmark inference speed. Target: <50ms per prediction on MI300X.
-- **Consistency check:** Run 100 random formulations to ensure no NaN or out-of-range outputs.
+  - Pure SiO₂ → should classify as glossy/transparent
+  - High Al₂O₃ → should classify as matte/opaque
+  - Known reference formulations (Leach 4321 Clear)
+- **Consistency check:** 100 random formulations, verify no NaN or out-of-range outputs.
+- **Benchmark:** GNN vs. XGBoost vs. CatBoost comparison table for the pitch.
 
 ## Deliverables
 
-- `gnn/model.py` — GIN architecture definition
+- `gnn/model.py` — GIN architecture (surface + transparency + color heads only)
 - `gnn/train.py` — Training script with ROCm support
 - `gnn/inference.py` — Low-latency inference wrapper (<50ms)
+- `gnn/baselines.py` — XGBoost/CatBoost comparison baselines
 - `gnn/glaze_gnn_state.pt` — Trained weights
-- `backend/training/data_utils.py` — GlazyBench → PyG conversion
-- Validation report showing CTE within ±10% of known formulations
+- `backend/app/physics/cte.py` — Deterministic CTE estimation (with Teammate 1)
 
 ## GNN Architecture
 
@@ -85,10 +84,21 @@ GINConv(128 → 128) + BatchNorm + ReLU
   ▼
 Global Mean + Max Pooling (concat → 256)
   │
-  ├── Linear(256 → 1)  → CTE (regression)
-  ├── Linear(256 → 1)  → Crazing (sigmoid binary)
-  └── Linear(256 → 4)  → Surface (softmax 4-class)
+  ├── Linear(256 → 9)   → Surface (softmax 9-class)
+  ├── Linear(256 → 4)   → Transparency (softmax 4-class)
+  └── Linear(256 → 9)   → Color family (softmax 9-class)
 ```
+
+## GlazyBench Label Space (Source of Truth)
+
+| Label | Type | Classes | Coverage |
+|-------|------|---------|----------|
+| Surface | Classification | 9 (Glossy, Semi-glossy, Satin, Matte, Dry Matte, Stony Matte, etc.) | 6,844 train / 3,730 test |
+| Transparency | Classification | 4 (Opaque, Semi-opaque, Translucent, Transparent) | 6,584 train / 3,322 test |
+| Color Family | Classification | 9 (Black, Blue, Brown, Green, Orange, Pink, Red, White, Yellow) | 12,175 train / 4,903 test |
+| RGB Color | Regression | Continuous [0,255]³ | 12,175 train / 4,903 test |
+
+**Not in GlazyBench (handled by deterministic physics):** CTE, crazing, shivering, pinholing, crawling
 
 ## ROCm Setup
 

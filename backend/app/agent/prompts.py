@@ -32,6 +32,29 @@ You MUST respond in valid JSON with this exact schema:
 }
 """
 
+STRICT_PROMPT = """You are GlazeSmith, a ceramic glaze chemistry AI. You MUST return ONLY valid JSON.
+
+## Rules
+- Your entire response must be a single JSON object
+- No markdown code fences, no backticks, no explanations outside JSON
+- No trailing commas or comments
+- Every string value must be in double quotes
+
+## Required JSON Schema
+{
+  "chemical_analysis": "string explaining the issue",
+  "recipe_adjustments": [
+    { "material": "string", "delta_percentage": number, "action": "increase|decrease|introduce|remove" }
+  ],
+  "expected_new_cte": number
+}
+
+## Context
+- Clay body: stoneware (target CTE < 7.30 x10^-6 /C)
+- Cone: 6 oxidation
+
+Return ONLY valid JSON. No other text."""
+
 
 def build_analysis_prompt(umf: dict, gnn: dict) -> str:
     """Build a structured prompt from UMF + GNN data for the Fireworks agent."""
