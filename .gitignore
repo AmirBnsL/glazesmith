@@ -10,3 +10,4 @@ models/
 *.pt
 *.safetensors
 .DS_Store
+next-env.d.ts
