@@ -1,12 +1,11 @@
 import json
+import re
 import time
 from typing import Any
 from openai import OpenAI, APIError, RateLimitError
 from pydantic import ValidationError
 from ..config import settings
 from .prompts import SYSTEM_PROMPT, STRICT_PROMPT, build_analysis_prompt
-from .tools import TOOL_DEFINITIONS
-from ..models.schemas import Remediation, RecipeAdjustment
 
 MAX_RETRIES = 2
 FALLBACK = {
@@ -23,10 +22,16 @@ class FireworksAgent:
             api_key=settings.fireworks_api_key,
         )
 
-    def analyze_and_remediate(self, umf: dict, gnn: dict) -> dict:
-        self._validate_inputs(umf, gnn)
+    def analyze_and_remediate(
+        self,
+        umf: dict,
+        physics_engine: dict,
+        gnn_inference: dict,
+        nearest_neighbours: list[dict],
+    ) -> dict:
+        self._validate_inputs(umf, physics_engine, gnn_inference, nearest_neighbours)
 
-        prompt = build_analysis_prompt(umf, gnn)
+        prompt = build_analysis_prompt(umf, physics_engine, gnn_inference, nearest_neighbours)
         last_error = ""
 
         for attempt in range(MAX_RETRIES):
@@ -37,8 +42,6 @@ class FireworksAgent:
                         {"role": "system", "content": STRICT_PROMPT if attempt > 0 else SYSTEM_PROMPT},
                         {"role": "user", "content": prompt},
                     ],
-                    tools=TOOL_DEFINITIONS,
-                    tool_choice="auto",
                     response_format={"type": "json_object"},
                     temperature=0.3,
                     max_tokens=2048,
@@ -67,114 +70,51 @@ class FireworksAgent:
         if content:
             try:
                 parsed = json.loads(content)
-                validated = self._validate_output(parsed)
-                return validated
+                return self._validate_output(parsed)
             except (json.JSONDecodeError, ValidationError, KeyError):
                 pass
 
-        if choice.message.tool_calls:
-            return self._execute_tool_chain(choice.message.tool_calls)
-
         return None
 
-    def _execute_tool_chain(self, tool_calls: list) -> dict:
-        messages = [
-            {"role": "system", "content": SYSTEM_PROMPT},
-        ]
-
-        for tc in tool_calls:
-            try:
-                args = json.loads(tc.function.arguments)
-                result = self._run_tool(tc.function.name, args)
-                messages.append({"role": "assistant", "content": None, "tool_calls": [tc]})
-                messages.append({
-                    "role": "tool",
-                    "tool_call_id": tc.id,
-                    "content": json.dumps(result),
-                })
-            except (json.JSONDecodeError, KeyError) as e:
-                messages.append({
-                    "role": "tool",
-                    "tool_call_id": tc.id,
-                    "content": json.dumps({"error": str(e)}),
-                })
-
-        for attempt in range(MAX_RETRIES):
-            try:
-                final = self.client.chat.completions.create(
-                    model=settings.llm_model,
-                    messages=messages + [{"role": "user", "content": "Now provide the final remediation in JSON format based on the tool results above."}],
-                    response_format={"type": "json_object"},
-                    temperature=0.3,
-                    max_tokens=2048,
-                )
-
-                content = final.choices[0].message.content
-                if content:
-                    try:
-                        parsed = json.loads(content)
-                        return self._validate_output(parsed)
-                    except (json.JSONDecodeError, ValidationError):
-                        if attempt < MAX_RETRIES - 1:
-                            messages.append({
-                                "role": "user",
-                                "content": "Your previous response was not valid JSON. Return ONLY valid JSON matching the schema.",
-                            })
-            except (APIError, RateLimitError) as e:
-                if attempt < MAX_RETRIES - 1:
-                    time.sleep(1.5 ** (attempt + 1))
-
-        return dict(FALLBACK)
-
-    def _validate_inputs(self, umf: dict, gnn: dict) -> None:
-        if not isinstance(umf, dict) or not isinstance(gnn, dict):
-            raise ValueError("UMF and GNN data must be dictionaries")
-
-        if not gnn.get("coefficient_of_thermal_expansion"):
-            gnn["coefficient_of_thermal_expansion"] = 7.0e-6
-        if not gnn.get("predicted_surface_class"):
-            gnn["predicted_surface_class"] = "glossy"
-        if gnn.get("crazing_risk_probability") is None:
-            gnn["crazing_risk_probability"] = 0.0
+    def _validate_inputs(
+        self,
+        umf: dict,
+        physics_engine: dict,
+        gnn_inference: dict,
+        nearest_neighbours: list[dict],
+    ) -> None:
+        if not isinstance(umf, dict) or not isinstance(physics_engine, dict) or not isinstance(gnn_inference, dict):
+            raise ValueError("umf, physics_engine, and gnn_inference must be dictionaries")
+        if not isinstance(nearest_neighbours, list):
+            raise ValueError("nearest_neighbours must be a list")
 
     def _validate_output(self, data: dict) -> dict:
-        adjustments = [
-            RecipeAdjustment(**adj) for adj in data.get("recipe_adjustments", [])
-        ]
+        from ..models.schemas import Remediation, RecipeAdjustment
+
+        adjustments_raw = data.get("recipe_adjustments", [])
+        if not isinstance(adjustments_raw, list):
+            adjustments_raw = []
+        adjustments = []
+        for adj in adjustments_raw[:5]:
+            try:
+                adjustments.append(RecipeAdjustment(**adj))
+            except (ValidationError, TypeError):
+                pass
+
+        raw_cte = data.get("expected_new_cte", 0.0)
+        if isinstance(raw_cte, str):
+            match = re.search(r"[-+]?\d*\.?\d+(?:e[-+]?\d+)?", str(raw_cte).replace("×10", "e").replace("−", "-"))
+            raw_cte = float(match.group()) if match else 0.0
+        else:
+            raw_cte = float(raw_cte)
 
         validated = Remediation(
             chemical_analysis=str(data.get("chemical_analysis", "")),
             recipe_adjustments=adjustments,
-            expected_new_cte=float(data.get("expected_new_cte", 0.0)),
+            expected_new_cte=raw_cte,
         )
 
         return validated.model_dump()
-
-    def _run_tool(self, name: str, args: dict) -> dict:
-        if name == "calculate_cte":
-            return self._calc_cte(args)
-        if name == "fix_defect":
-            return self._fix_defect(args)
-        return {"result": f"Tool {name} executed"}
-
-    def _calc_cte(self, args: dict) -> dict:
-        factors = {"sio2": 0.8, "al2o3": 1.0, "k2o": 12.0, "na2o": 16.0, "cao": 13.0, "mgo": 6.0}
-        total = sum(args.get(k, 0.0) for k in factors)
-        if total == 0:
-            return {"cte": 0.0}
-        cte = sum(args.get(ox, 0.0) / total * 100 * factor for ox, factor in factors.items()) / 100
-        return {"cte": round(cte, 2)}
-
-    def _fix_defect(self, args: dict) -> dict:
-        defect = args.get("defect", "")
-        advice = {
-            "crazing": "Increase SiO2 by 5-10%, reduce Na2O/K2O by 2-4%. Consider substituting spodumene for feldspar.",
-            "crawling": "Reduce Al2O3 by 2-3%, increase flux content. Ensure bisque is clean and dust-free.",
-            "pinholing": "Increase hold time at peak temperature. Add 1-2% B2O3 to reduce viscosity.",
-            "blistering": "Reduce peak temperature by 1-2 cones. Reduce Fe2O3 content.",
-            "shivering": "Reduce SiO2 by 3-5%, increase Na2O or K2O to raise CTE.",
-        }
-        return {"defect": defect, "advice": advice.get(defect, "Unknown defect")}
 
 
 agent = FireworksAgent()
