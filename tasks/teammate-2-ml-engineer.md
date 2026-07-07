@@ -2,7 +2,7 @@
 
 ## Role
 
-Own Layer 2 (GNN inference module) and Layer 1 physics integration. The GNN is trained strictly on GlazyBench's actual label space — surface finish, transparency, and color family. CTE and crazing are handled by deterministic physics (Layer 1), not ML.
+Own Layer 2 (GNN inference module with Domain-Informed Adjacency Matrix), Layer 2b (K-NN vector retrieval index), and Layer 1 physics integration. The GNN is trained strictly on GlazyBench's actual label space — surface finish, transparency, and color family. CTE and crazing are handled by deterministic physics (Layer 1), not ML. The K-NN index enables empirical nearest-neighbour retrieval.
 
 ## Core Tasks
 
@@ -10,16 +10,19 @@ Own Layer 2 (GNN inference module) and Layer 1 physics integration. The GNN is t
 
 - **ROCm environment:** Verify PyTorch + ROCm stack. Run `torch.cuda.is_available()`. Install PyTorch Geometric.
 - **GlazyBench acquisition:** Clone from Hugging Face (`glazy/glazybench`). Explore schema: recipes, UMF matrices, firing params, property labels (surface, transparency, color). Note: GlazyBench does NOT contain CTE or crazing labels — those are handled by deterministic physics in Layer 1.
-- **UMF → PyTorch Geometric graph:** Build graph conversion:
+- **Domain-Informed Adjacency Matrix:** Build graph conversion in `gnn/adjacency.py`:
   - Nodes: 7 oxide nodes (SiO₂, Al₂O₃, Na₂O, K₂O, CaO, MgO, Fe₂O₃)
   - Features: [mol%, role_one_hot(4), atomic_mass/100]
-  - Edges: Fully connected
+  - Edges: Fixed edges based on established ceramic oxide roles — fluxes connect to formers, intermediates bridge pathways. Replaces the chemically-arbitrary "fully connected" baseline.
   - Targets: Surface (9-class), transparency (4-class), color family (9-class)
+- **Faiss K-NN index prep:** Build initial Faiss index from GlazyBench 47-oxide UMF vectors for cosine similarity retrieval.
 
 #### Files to touch
 - `gnn/model.py`
 - `gnn/train.py`
+- `gnn/adjacency.py`
 - `backend/app/models/dataset.py`
+- `backend/app/retrieval/knn.py`
 
 ### Day 2 — GNN Architecture & Training
 
@@ -62,15 +65,20 @@ Own Layer 2 (GNN inference module) and Layer 1 physics integration. The GNN is t
 
 - `gnn/model.py` — GIN architecture (surface + transparency + color heads only)
 - `gnn/train.py` — Training script with ROCm support
+- `gnn/adjacency.py` — Domain-Informed Adjacency Matrix builder
 - `gnn/inference.py` — Low-latency inference wrapper (<50ms)
 - `gnn/baselines.py` — XGBoost/CatBoost comparison baselines
 - `gnn/glaze_gnn_state.pt` — Trained weights
+- `backend/app/retrieval/knn.py` — Faiss/USearch K-NN index build + query
 - `backend/app/physics/cte.py` — Deterministic CTE estimation (with Teammate 1)
 
 ## GNN Architecture
 
 ```
 Input: 7 nodes × 6 features
+  │
+  ├── Domain-Informed Adjacency Matrix
+  │   (fixed edges by ceramic role: flux↔former, intermediate↔both)
   │
   ▼
 GINConv(6 → 128) + BatchNorm + ReLU + Dropout(0.15)
