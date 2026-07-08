@@ -32,11 +32,12 @@ class GlazeRenderer:
         if torch.cuda.is_available():
             self.pipe.enable_model_cpu_offload()
 
-    def build_prompt(self, gnn_prediction: dict) -> tuple[str, str]:
-        surface = gnn_prediction.get("predicted_surface_class", "glossy")
-        crazing = gnn_prediction.get("crazing_risk_probability", 0.0)
-        cte = gnn_prediction.get("coefficient_of_thermal_expansion", 7.0e-6)
-        transparency = gnn_prediction.get("transparency_class", "transparent_clear")
+    def build_prompt(self, gnn_inference: dict) -> tuple[str, str]:
+        surface = gnn_inference.get("surface_class", "glossy")
+        crazing_prob = gnn_inference.get("crazing_risk_probability",
+                                          gnn_inference.get("surface_confidence", 0.0))
+        cte = gnn_inference.get("coefficient_of_thermal_expansion", 7.0e-6)
+        transparency = gnn_inference.get("transparency_class", "transparent_clear")
 
         surface_desc = {
             "glossy": "high-gloss reflective silicate glass matrix",
@@ -71,11 +72,11 @@ class GlazeRenderer:
         return prompt, negative
 
     @torch.inference_mode()
-    def generate(self, gnn_prediction: dict) -> str:
+    def generate(self, gnn_inference: dict) -> str:
         if self.pipe is None:
             self.load()
 
-        prompt, negative = self.build_prompt(gnn_prediction)
+        prompt, negative = self.build_prompt(gnn_inference)
 
         image: Image.Image = self.pipe(
             prompt=prompt,

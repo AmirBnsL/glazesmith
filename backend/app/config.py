@@ -12,8 +12,7 @@ class Settings(BaseSettings):
     port: int = 8000
     target_cte_stoneware: float = 7.30e-6
 
-    class Config:
-        env_file = ".env"
+    model_config = {"env_file": ".env", "extra": "allow"}
 
 
 settings = Settings()
