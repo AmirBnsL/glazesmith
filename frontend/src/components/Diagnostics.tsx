@@ -6,6 +6,8 @@ interface Props {
     target_cte_max: number;
     crazing_risk: number;
     finish: string;
+    transparency: string;
+    color_family: string;
   } | null;
 }
 

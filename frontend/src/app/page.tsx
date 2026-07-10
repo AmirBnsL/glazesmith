@@ -5,6 +5,7 @@ import RecipeGrid from "@/components/RecipeGrid";
 import StullChart from "@/components/StullChart";
 import Diagnostics from "@/components/Diagnostics";
 import GlazePreview from "@/components/GlazePreview";
+import Neighbours from "@/components/Neighbours";
 import Remediation from "@/components/Remediation";
 import { predictGlaze } from "@/lib/api";
 import type { RecipeIngredient, PredictResponse } from "@/lib/types";
@@ -53,7 +54,7 @@ export default function Home() {
           </span>
         </div>
         <div className="flex items-center gap-3 text-xs text-stone-500">
-          <span>Fireworks AI · SDXL · GNN</span>
+          <span>Fireworks AI · GNN · XGBoost</span>
         </div>
       </header>
 
@@ -91,10 +92,17 @@ export default function Home() {
         </aside>
 
         <section className="flex-1 grid grid-cols-2 gap-4 p-4 overflow-y-auto">
-          <GlazePreview
-            imageUrl={result?.render_output_url || null}
-            loading={loading}
-          />
+          <div className="space-y-4">
+            <GlazePreview
+              imageUrl={result?.render_output_url || null}
+              loading={loading}
+              neighbours={result?.nearest_neighbours || null}
+            />
+            <Neighbours
+              neighbours={result?.nearest_neighbours || null}
+              loading={loading}
+            />
+          </div>
           <Remediation
             remediation={result?.remediation || null}
             loading={loading}
