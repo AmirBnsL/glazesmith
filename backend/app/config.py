@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     host: str = "0.0.0.0"
     port: int = 8000
     target_cte_stoneware: float = 7.30e-6
+    sdxl_service_url: str = "http://localhost:8001"
 
     model_config = {"env_file": ".env", "extra": "allow"}
 

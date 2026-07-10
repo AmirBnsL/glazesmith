@@ -52,6 +52,18 @@ export interface OptimizerCandidate {
   score: number;
 }
 
+export interface GenerateImageRequest {
+  surface: string;
+  transparency: string;
+  color_family: string;
+  recipe: { material: string; percentage: number }[];
+}
+
+export interface GenerateImageResponse {
+  image_url: string;
+  success: boolean;
+}
+
 export interface PredictResponse {
   status: string;
   timestamp: string;

@@ -5,8 +5,8 @@ __pycache__/
 .env
 venv/
 .venv/
-data/glazybench/
 *.pkl
+!backend/app/models/*.pkl
 *.pt
 *.safetensors
 .DS_Store

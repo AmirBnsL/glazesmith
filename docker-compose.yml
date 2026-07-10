@@ -6,22 +6,20 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./data:/app/data
-      - ./gnn:/app/gnn
+      - ./data:/data
     env_file:
       - .env
     environment:
-      - ROCM_VISIBLE_DEVICES=0
-      - HSA_OVERRIDE_GFX_VERSION=10.3.0
-    devices:
-      - /dev/dri:/dev/dri
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: amd
-              count: 1
-              capabilities: [gpu]
+      - SDXL_SERVICE_URL=http://sdxl:8001
+    depends_on:
+      sdxl:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   frontend:
     build:
@@ -30,6 +28,37 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     environment:
       - NEXT_PUBLIC_API_URL=http://backend:8000
+
+  sdxl:
+    build:
+      context: ./sdxl-service
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    volumes:
+      - sdxl-models:/root/.cache/huggingface
+      - sdxl-images:/app/images
+    devices:
+      - /dev/kfd:/dev/kfd
+      - /dev/dri:/dev/dri
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: amd
+              count: 1
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+
+volumes:
+  sdxl-models:
+  sdxl-images:

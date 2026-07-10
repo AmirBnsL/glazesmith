@@ -7,7 +7,7 @@ import Diagnostics from "@/components/Diagnostics";
 import GlazePreview from "@/components/GlazePreview";
 import Neighbours from "@/components/Neighbours";
 import Remediation from "@/components/Remediation";
-import { predictGlaze } from "@/lib/api";
+import { predictGlaze, generateImage } from "@/lib/api";
 import type { RecipeIngredient, PredictResponse } from "@/lib/types";
 
 export default function Home() {
@@ -21,6 +21,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<PredictResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [generating, setGenerating] = useState(false);
 
   const runPrediction = useCallback(async () => {
     setLoading(true);
@@ -40,6 +41,25 @@ export default function Home() {
     setLoading(false);
   }, [recipe, cone]);
 
+  const handleGenerate = useCallback(async () => {
+    if (!result) return;
+    setGenerating(true);
+    try {
+      const res = await generateImage({
+        surface: result.metrics.finish,
+        transparency: result.metrics.transparency,
+        color_family: result.metrics.color_family,
+        recipe,
+      });
+      if (res.success) {
+        setResult((prev) => prev ? { ...prev, render_output_url: res.image_url } : prev);
+      }
+    } catch (e: any) {
+      console.error("Image generation failed:", e);
+    }
+    setGenerating(false);
+  }, [result, recipe]);
+
   return (
     <div className="h-screen flex flex-col">
       <header className="border-b border-stone-800 px-6 py-3 flex items-center justify-between">
@@ -54,7 +74,7 @@ export default function Home() {
           </span>
         </div>
         <div className="flex items-center gap-3 text-xs text-stone-500">
-          <span>Fireworks AI · GNN · XGBoost</span>
+          <span>Fireworks AI · GNN · XGBoost · SDXL</span>
         </div>
       </header>
 
@@ -96,7 +116,9 @@ export default function Home() {
             <GlazePreview
               imageUrl={result?.render_output_url || null}
               loading={loading}
+              generating={generating}
               neighbours={result?.nearest_neighbours || null}
+              onGenerate={handleGenerate}
             />
             <Neighbours
               neighbours={result?.nearest_neighbours || null}

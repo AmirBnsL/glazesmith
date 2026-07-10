@@ -1,12 +1,14 @@
 import logging
 from fastapi import APIRouter, HTTPException
 from datetime import datetime, timezone
+from pydantic import BaseModel
 from ..models.schemas import PredictRequest, PredictResponse, Remediation, RecipeAdjustment, StullCoordinates, NeighbourInfo, OptimizerCandidate, GlazeMetrics
 from ..engine.pipeline import compute_physics, search_neighbours, evaluate_recipe
 from ..engine.umf import convert_recipe_to_umf
 from ..models.xgb_predictor import xgb_predictor
 from ..agent.core import get_agent
 from ..optimizer.pareto import optimize
+from ..render.sdxl import generate_glaze_image
 from ..config import settings
 
 logger = logging.getLogger(__name__)
@@ -125,3 +127,31 @@ async def predict_glaze(request: PredictRequest):
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
+
+
+class GenerateImageRequest(BaseModel):
+    surface: str
+    transparency: str
+    color_family: str
+    recipe: list[dict]
+
+
+class GenerateImageResponse(BaseModel):
+    image_url: str
+    success: bool
+
+
+@router.post("/generate-image", response_model=GenerateImageResponse)
+async def generate_image(req: GenerateImageRequest):
+    try:
+        image_url = await generate_glaze_image(
+            surface=req.surface,
+            transparency=req.transparency,
+            color_family=req.color_family,
+            recipe=req.recipe,
+        )
+        if image_url:
+            return GenerateImageResponse(image_url=image_url, success=True)
+        return GenerateImageResponse(image_url="", success=False)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Image generation failed: {str(e)}")

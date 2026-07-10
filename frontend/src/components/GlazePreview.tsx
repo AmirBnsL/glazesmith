@@ -5,7 +5,9 @@ import type { PredictResponse } from "@/lib/types";
 interface Props {
   imageUrl: string | null;
   loading: boolean;
+  generating: boolean;
   neighbours?: PredictResponse["nearest_neighbours"] | null;
+  onGenerate?: () => void;
 }
 
 const COLOR_MAP: Record<string, string> = {
@@ -20,7 +22,7 @@ const COLOR_MAP: Record<string, string> = {
   Purple: "#6b4f7a",
 };
 
-export default function GlazePreview({ imageUrl, loading, neighbours }: Props) {
+export default function GlazePreview({ imageUrl, loading, generating, neighbours, onGenerate }: Props) {
   const neighborColor = (() => {
     if (!neighbours || neighbours.length === 0) return null;
     const counts: Record<string, number> = {};
@@ -52,7 +54,7 @@ export default function GlazePreview({ imageUrl, loading, neighbours }: Props) {
             Enter a recipe and run prediction to see the fired glaze preview
           </div>
         )}
-        {!loading && !imageUrl && neighborColor && (
+        {!loading && !imageUrl && neighborColor && !generating && (
           <div className="text-center">
             <div className="text-white/80 text-xs font-semibold drop-shadow-md">
               {neighborColor}
@@ -62,7 +64,20 @@ export default function GlazePreview({ imageUrl, loading, neighbours }: Props) {
             </div>
           </div>
         )}
+        {!loading && !imageUrl && neighborColor && generating && (
+          <div className="text-stone-500 text-sm animate-pulse">
+            Generating SDXL image...
+          </div>
+        )}
       </div>
+      {!loading && !generating && !imageUrl && neighborColor && onGenerate && (
+        <button
+          onClick={onGenerate}
+          className="w-full bg-stone-700 hover:bg-stone-600 text-xs font-medium py-2 rounded-xl transition-colors text-stone-200"
+        >
+          Generate Image (SDXL)
+        </button>
+      )}
     </div>
   );
 }
