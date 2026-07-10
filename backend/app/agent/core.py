@@ -147,14 +147,15 @@ class FireworksAgent:
                     ],
                     response_format={"type": "json_object"},
                     temperature=0.3,
-                        max_tokens=2048,
+                        max_tokens=8192,
                 )
 
+                finish = getattr(response.choices[0], "finish_reason", "unknown")
                 usage = getattr(response, "usage", None)
                 if usage:
                     logger.info(
-                        "LLM call (verify=%s, attempt=%d): prompt=%d, completion=%d, total=%d",
-                        is_verification, attempt, usage.prompt_tokens, usage.completion_tokens, usage.total_tokens,
+                        "LLM call (verify=%s, attempt=%d): prompt=%d, completion=%d, total=%d, finish=%s",
+                        is_verification, attempt, usage.prompt_tokens, usage.completion_tokens, usage.total_tokens, finish,
                     )
 
                 result = self._parse_response(response)
@@ -175,15 +176,23 @@ class FireworksAgent:
 
     def _parse_response(self, response: Any) -> dict | None:
         choice = response.choices[0]
-        content = choice.message.content
+        content = choice.message.content or ""
 
-        if content:
+        first_brace = content.find("{")
+        last_brace = content.rfind("}")
+        if first_brace != -1 and last_brace > first_brace:
+            json_str = content[first_brace : last_brace + 1]
             try:
-                parsed = json.loads(content)
+                parsed = json.loads(json_str)
                 return self._validate_output(parsed)
             except (json.JSONDecodeError, ValidationError, KeyError):
                 pass
 
+        logger.warning(
+            "Failed to parse JSON from LLM response (finish=%s). Raw start: %.200s",
+            getattr(choice, "finish_reason", "unknown"),
+            content[:200],
+        )
         return None
 
     def _validate_inputs(
