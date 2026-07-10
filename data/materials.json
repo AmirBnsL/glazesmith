@@ -1,902 +1,229 @@
 {
   "materials": {
-    "a_feldspar": {
-      "aliases": [
-        "a feldspar"
-      ],
+    "nepheline_syenite": {
+      "name": "Nepheline Syenite",
       "analysis": {
-        "Al2O3": 17.83,
-        "CaO": 0.13,
-        "Fe2O3": 0.13,
-        "K2O": 11.77,
-        "Li2O": 0.2,
-        "MgO": 0.03,
-        "Na2O": 2.7,
-        "SiO2": 67.06,
-        "TiO2": 0.01
+        "SiO2": 60.0,
+        "Al2O3": 24.0,
+        "Na2O": 10.0,
+        "K2O": 5.0
       },
-      "loi": 0.34,
-      "name": "A Feldspar"
+      "aliases": [
+        "nepheline syenite spectrum n45",
+        "nepheline syenite norwegian",
+        "nepheline syenite a270",
+        "nepheline syenite",
+        "nepheline"
+      ]
     },
-    "alumina": {
-      "aliases": [
-        "alumina",
-        "aluminum oxide"
-      ],
+    "potash_feldspar": {
+      "name": "Potash Feldspar",
       "analysis": {
-        "Al2O3": 100.0
+        "SiO2": 65.0,
+        "Al2O3": 18.0,
+        "K2O": 12.0,
+        "Na2O": 3.0
       },
-      "loi": 0.0,
-      "name": "Alumina"
-    },
-    "alumina_hydrate": {
       "aliases": [
-        "alumina hydrate",
-        "aluminum hydrate"
-      ],
-      "analysis": {
-        "Al2O3": 65.39
-      },
-      "loi": 34.61,
-      "name": "Alumina Hydrate"
-    },
-    "amakusa_stone": {
-      "aliases": [
-        "amakusa stone"
-      ],
-      "analysis": {
-        "Al2O3": 16.75,
-        "CaO": 0.05,
-        "Fe2O3": 0.42,
-        "K2O": 2.35,
-        "MgO": 0.28,
-        "MnO": 0.01,
-        "P2O5": 0.01,
-        "SiO2": 77.14,
-        "TiO2": 0.02
-      },
-      "loi": 2.97,
-      "name": "Amakusa Stone"
-    },
-    "applewood_ash": {
-      "aliases": [
-        "applewood ash",
-        "wood ash",
-        "mixed wood ash",
-        "hardwood ash"
-      ],
-      "analysis": {
-        "CaO": 54.14,
-        "K2O": 9.01,
-        "MgO": 4.2,
-        "Na2O": 1.45,
-        "P2O5": 3.43,
-        "SiO2": 2.06
-      },
-      "loi": 25.7,
-      "name": "Applewood Ash"
-    },
-    "ball_clay": {
-      "aliases": [
-        "ball clay",
-        "kentucky ball clay",
-        "tennessee ball clay",
-        "om#4 ball clay",
-        "kentucky om #4 ball clay",
-        "xx sagger ball clay",
-        "kentucky om 4 ball clay",
-        "om4 ball clay",
-        "om 4 ball clay"
-      ],
-      "analysis": {
-        "Al2O3": 25.0,
-        "CaO": 0.3,
-        "Fe2O3": 1.0,
-        "K2O": 0.9,
-        "MgO": 0.3,
-        "Na2O": 0.4,
-        "SiO2": 59.0,
-        "TiO2": 1.0
-      },
-      "loi": 12.0,
-      "name": "Ball Clay"
-    },
-    "barium_carbonate": {
-      "aliases": [
-        "barium carbonate"
-      ],
-      "analysis": {
-        "BaO": 77.66
-      },
-      "loi": 0.0,
-      "name": "Barium Carbonate"
-    },
-    "bentonite": {
-      "aliases": [
-        "bentonite"
-      ],
-      "analysis": {
-        "Al2O3": 20.0,
-        "CaO": 1.0,
-        "Fe2O3": 3.5,
-        "K2O": 1.0,
-        "MgO": 2.0,
-        "Na2O": 3.0,
-        "SiO2": 59.0
-      },
-      "loi": 10.0,
-      "name": "Bentonite"
-    },
-    "bone_ash": {
-      "aliases": [
-        "bone ash"
-      ],
-      "analysis": {
-        "CaO": 55.82,
-        "P2O5": 42.39
-      },
-      "loi": 0.0,
-      "name": "Bone Ash"
-    },
-    "borax": {
-      "aliases": [
-        "borax",
-        "anhydrous borax"
-      ],
-      "analysis": {
-        "B2O3": 69.19,
-        "Na2O": 30.82
-      },
-      "loi": 0.0,
-      "name": "Borax"
-    },
-    "bps_cornish_stone": {
-      "aliases": [
-        "bps cornish stone",
-        "cornish stone"
-      ],
-      "analysis": {
-        "Al2O3": 15.49,
-        "CaO": 1.49,
-        "Fe2O3": 0.13,
-        "K2O": 4.52,
-        "MgO": 0.14,
-        "Na2O": 3.48,
-        "P2O5": 0.48,
-        "SiO2": 74.22,
-        "TiO2": 0.06
-      },
-      "loi": 0.0,
-      "name": "BPS Cornish Stone"
-    },
-    "calcined_alumina": {
-      "aliases": [
-        "calcined alumina"
-      ],
-      "analysis": {
-        "Al2O3": 100.0
-      },
-      "loi": 0.0,
-      "name": "Calcined Alumina"
-    },
-    "calcined_kaolin": {
-      "aliases": [
-        "calcined kaolin"
-      ],
-      "analysis": {
-        "Al2O3": 45.9,
-        "SiO2": 54.1
-      },
-      "loi": 0.0,
-      "name": "Calcined Kaolin"
-    },
-    "calcium_carbonate": {
-      "aliases": [
-        "calcium carbonate"
-      ],
-      "analysis": {
-        "CaO": 56.1
-      },
-      "loi": 0.0,
-      "name": "Calcium Carbonate"
-    },
-    "cobalt_carbonate": {
-      "aliases": [
-        "cobalt carbonate"
-      ],
-      "analysis": {
-        "CoO": 63.0
-      },
-      "loi": 0.0,
-      "name": "Cobalt Carbonate"
-    },
-    "colemanite": {
-      "aliases": [
-        "colemanite"
-      ],
-      "analysis": {
-        "B2O3": 50.8,
-        "CaO": 27.3
-      },
-      "loi": 21.9,
-      "name": "Colemanite"
-    },
-    "copper_carbonate": {
-      "aliases": [
-        "copper carbonate"
-      ],
-      "analysis": {
-        "CuO": 64.4
-      },
-      "loi": 0.0,
-      "name": "Copper Carbonate"
-    },
-    "cryolite": {
-      "aliases": [
-        "cryolite"
-      ],
-      "analysis": {
-        "Al2O3": 24.25,
-        "Na2O": 44.31
-      },
-      "loi": 0.0,
-      "name": "Cryolite"
+        "mahavir potash feldspar",
+        "potassium feldspar",
+        "potash feldspar",
+        "custer feldspar"
+      ]
     },
     "custer_feldspar": {
+      "name": "Custer Feldspar",
+      "analysis": {
+        "SiO2": 70.0,
+        "Al2O3": 17.0,
+        "K2O": 9.0,
+        "Na2O": 3.0
+      },
       "aliases": [
         "custer feldspar"
-      ],
-      "analysis": {
-        "Al2O3": 17.0,
-        "CaO": 0.3,
-        "Fe2O3": 0.1,
-        "K2O": 10.0,
-        "Na2O": 3.0,
-        "SiO2": 68.5
-      },
-      "loi": 0.3,
-      "name": "Custer Feldspar"
+      ]
     },
-    "dolomite": {
-      "aliases": [
-        "dolomite"
-      ],
+    "soda_feldspar": {
+      "name": "Soda Feldspar",
       "analysis": {
-        "CaO": 30.49,
-        "MgO": 21.9
+        "SiO2": 68.0,
+        "Al2O3": 19.0,
+        "Na2O": 8.0,
+        "K2O": 2.0
       },
-      "loi": 0.0,
-      "name": "Dolomite"
-    },
-    "flint": {
       "aliases": [
-        "flint"
-      ],
-      "analysis": {
-        "CaO": 3.0,
-        "Fe2O3": 0.1,
-        "MgO": 0.1,
-        "SiO2": 94.0
-      },
-      "loi": 0.0,
-      "name": "Flint"
-    },
-    "gerstley_borate": {
-      "aliases": [
-        "gerstley borate"
-      ],
-      "analysis": {
-        "Al2O3": 1.0,
-        "B2O3": 26.8,
-        "CaO": 19.4,
-        "Fe2O3": 0.4,
-        "K2O": 0.4,
-        "MgO": 3.5,
-        "Na2O": 4.0,
-        "P2O5": 0.1,
-        "SiO2": 14.8,
-        "TiO2": 0.1
-      },
-      "loi": 29.5,
-      "name": "Gerstley Borate"
-    },
-    "goldart": {
-      "aliases": [
-        "goldart"
-      ],
-      "analysis": {
-        "Al2O3": 28.8,
-        "CaO": 0.2,
-        "Fe2O3": 1.4,
-        "K2O": 1.9,
-        "MgO": 0.4,
-        "Na2O": 0.2,
-        "SiO2": 55.2,
-        "TiO2": 1.8
-      },
-      "loi": 10.0,
-      "name": "Goldart"
-    },
-    "iron_oxide_black": {
-      "aliases": [
-        "iron oxide black",
-        "black copper oxide"
-      ],
-      "analysis": {
-        "Fe2O3": 63.4,
-        "FeO": 28.5
-      },
-      "loi": 8.0,
-      "name": "Iron Oxide Black"
-    },
-    "iron_oxide_red": {
-      "aliases": [
-        "iron oxide red",
-        "red iron oxide",
-        "iron oxide"
-      ],
-      "analysis": {
-        "Fe2O3": 95.0
-      },
-      "loi": 0.0,
-      "name": "Iron Oxide Red"
-    },
-    "kaolin": {
-      "aliases": [
-        "kaolin",
-        "china clay",
-        "kaolin eckalite 1",
-        "helmer kaolin",
-        "lpc kaolin",
-        "velvacast kaolin"
-      ],
-      "analysis": {
-        "Al2O3": 40.21,
-        "SiO2": 47.29
-      },
-      "loi": 12.5,
-      "name": "Kaolin"
-    },
-    "kona_f_4_feldspar": {
-      "aliases": [
-        "kona f 4 feldspar",
-        "kona f-4 feldspar discontinued",
-        "kona f4 feldspar"
-      ],
-      "analysis": {
-        "Al2O3": 19.6,
-        "CaO": 1.7,
-        "K2O": 4.8,
-        "Na2O": 6.9,
-        "SiO2": 66.7
-      },
-      "loi": 0.2,
-      "name": "Kona F-4 Feldspar"
-    },
-    "lithium_carbonate": {
-      "aliases": [
-        "lithium carbonate"
-      ],
-      "analysis": {
-        "Li2O": 40.74
-      },
-      "loi": 0.0,
-      "name": "Lithium Carbonate"
-    },
-    "magnesium_zirconium_silicate": {
-      "aliases": [
-        "magnesium zirconium silicate"
-      ],
-      "analysis": {
-        "MgO": 18.02,
-        "SiO2": 26.88,
-        "ZrO2": 55.1
-      },
-      "loi": 0.0,
-      "name": "Magnesium Zirconium Silicate"
-    },
-    "manganese_dioxide": {
-      "aliases": [
-        "manganese dioxide"
-      ],
-      "analysis": {
-        "MnO2": 100.0
-      },
-      "loi": 0.0,
-      "name": "Manganese Dioxide"
-    },
-    "minspar_1": {
-      "aliases": [
-        "minspar 1"
-      ],
-      "analysis": {
-        "Al2O3": 18.5,
-        "CaO": 1.5,
-        "Fe2O3": 0.06,
-        "K2O": 4.1,
-        "Na2O": 6.5,
-        "SiO2": 68.6
-      },
-      "loi": 0.3,
-      "name": "Minspar 1"
+        "sodium feldspar",
+        "soda feldspar norwegian",
+        "soda feldspar"
+      ]
     },
     "minspar_200": {
+      "name": "Minspar 200",
+      "analysis": {
+        "SiO2": 68.0,
+        "Al2O3": 19.0,
+        "Na2O": 7.0,
+        "CaO": 2.0,
+        "K2O": 1.0
+      },
       "aliases": [
         "minspar 200",
         "minspar"
-      ],
-      "analysis": {
-        "Al2O3": 18.2,
-        "CaO": 1.5,
-        "Fe2O3": 0.07,
-        "K2O": 4.1,
-        "Na2O": 6.5,
-        "SiO2": 68.8
-      },
-      "loi": 0.3,
-      "name": "Minspar 200"
+      ]
     },
-    "nepheline_syenite": {
-      "aliases": [
-        "nepheline syenite",
-        "nepheline syenite a270",
-        "nepheline syenite norwegian"
-      ],
+    "g200_feldspar": {
+      "name": "G-200 Feldspar",
       "analysis": {
-        "Al2O3": 23.3,
-        "CaO": 0.7,
-        "Fe2O3": 0.1,
-        "K2O": 4.6,
-        "MgO": 0.1,
-        "Na2O": 9.8,
-        "SiO2": 60.7
+        "SiO2": 67.0,
+        "Al2O3": 18.0,
+        "K2O": 8.0,
+        "Na2O": 5.0,
+        "CaO": 1.0
       },
-      "loi": 0.7,
-      "name": "Nepheline Syenite"
+      "aliases": [
+        "g200 feldspar",
+        "g-200 feldspar"
+      ]
     },
-    "noor_albite": {
-      "aliases": [
-        "noor albite"
-      ],
+    "kona_f4_feldspar": {
+      "name": "Kona F-4 Feldspar",
       "analysis": {
-        "Al2O3": 15.94,
-        "CaO": 0.22,
-        "Fe2O3": 0.25,
-        "K2O": 2.63,
-        "MgO": 0.01,
-        "SiO2": 72.26
+        "SiO2": 70.0,
+        "Al2O3": 17.0,
+        "Na2O": 7.0,
+        "K2O": 4.0,
+        "CaO": 1.0
       },
-      "loi": 0.0,
-      "name": "Noor Albite"
-    },
-    "old_hickory_fc340_ball_clay": {
       "aliases": [
-        "old hickory fc340 ball clay"
-      ],
-      "analysis": {
-        "Al2O3": 24.1,
-        "CaO": 0.05,
-        "Fe2O3": 1.01,
-        "K2O": 1.18,
-        "MgO": 0.3,
-        "Na2O": 0.11,
-        "SiO2": 62.04,
-        "TiO2": 1.27
-      },
-      "loi": 9.94,
-      "name": "Old Hickory FC340 Ball Clay"
-    },
-    "petalite": {
-      "aliases": [
-        "petalite"
-      ],
-      "analysis": {
-        "Al2O3": 16.65,
-        "Li2O": 4.87,
-        "SiO2": 78.49
-      },
-      "loi": 0.0,
-      "name": "Petalite"
-    },
-    "potash_feldspar": {
-      "aliases": [
-        "potash feldspar",
-        "potassium feldspar",
-        "mahavir potash feldspar"
-      ],
-      "analysis": {
-        "Al2O3": 18.32,
-        "K2O": 16.92,
-        "SiO2": 64.76
-      },
-      "loi": 0.0,
-      "name": "Potash Feldspar"
-    },
-    "redart": {
-      "aliases": [
-        "redart"
-      ],
-      "analysis": {
-        "Al2O3": 15.51,
-        "CaO": 0.26,
-        "Fe2O3": 7.05,
-        "K2O": 4.15,
-        "MgO": 1.59,
-        "Na2O": 0.38,
-        "P2O5": 0.22,
-        "SiO2": 64.95,
-        "TiO2": 1.09
-      },
-      "loi": 4.8,
-      "name": "Redart"
-    },
-    "rutile": {
-      "aliases": [
-        "rutile"
-      ],
-      "analysis": {
-        "Fe2O3": 10.0,
-        "TiO2": 90.0
-      },
-      "loi": 0.1,
-      "name": "Rutile"
-    },
-    "silica": {
-      "aliases": [
-        "silica",
-        "flint",
-        "quartz",
-        "silica (flint)",
-        "silica (325 mesh)",
-        "silica sand"
-      ],
-      "analysis": {
-        "SiO2": 100.0
-      },
-      "loi": 0.0,
-      "name": "Silica"
-    },
-    "soda_feldspar": {
-      "aliases": [
-        "soda feldspar",
-        "sodium feldspar",
-        "nepheline syenite spectrum n45",
-        "soda feldspar norwegian"
-      ],
-      "analysis": {
-        "Al2O3": 19.44,
-        "Na2O": 11.82,
-        "SiO2": 68.74
-      },
-      "loi": 0.0,
-      "name": "Soda Feldspar"
-    },
-    "sodium_carbonate": {
-      "aliases": [
-        "sodium carbonate",
-        "soda ash"
-      ],
-      "analysis": {
-        "Na2O": 50.0
-      },
-      "loi": 0.0,
-      "name": "Sodium Carbonate"
-    },
-    "sodium_feldspar_1005": {
-      "aliases": [
-        "sodium feldspar 1005"
-      ],
-      "analysis": {
-        "Al2O3": 19.5,
-        "Fe2O3": 0.02,
-        "K2O": 0.2,
-        "Na2O": 10.4,
-        "SiO2": 68.6,
-        "TiO2": 0.03
-      },
-      "loi": 0.1,
-      "name": "Sodium Feldspar 1005"
-    },
-    "spodumene": {
-      "aliases": [
-        "spodumene"
-      ],
-      "analysis": {
-        "Al2O3": 27.41,
-        "Li2O": 8.01,
-        "SiO2": 64.59
-      },
-      "loi": 0.0,
-      "name": "Spodumene"
-    },
-    "strontium_carbonate": {
-      "aliases": [
-        "strontium carbonate"
-      ],
-      "analysis": {
-        "SrO": 70.2
-      },
-      "loi": 0.0,
-      "name": "Strontium Carbonate"
-    },
-    "talc": {
-      "aliases": [
-        "talc",
-        "amtalc-c98 talc",
-        "amtalc",
-        "c98 talc"
-      ],
-      "analysis": {
-        "MgO": 31.87,
-        "SiO2": 63.38
-      },
-      "loi": 0.0,
-      "name": "Talc"
-    },
-    "tennessee_#10_ball_clay": {
-      "aliases": [
-        "tennessee #10 ball clay"
-      ],
-      "analysis": {
-        "Al2O3": 30.9,
-        "CaO": 0.4,
-        "Fe2O3": 1.01,
-        "K2O": 0.6,
-        "MgO": 0.3,
-        "Na2O": 0.6,
-        "SiO2": 52.8,
-        "TiO2": 1.5
-      },
-      "loi": 11.9,
-      "name": "Tennessee #10 Ball Clay"
-    },
-    "tin_oxide": {
-      "aliases": [
-        "tin oxide"
-      ],
-      "analysis": {
-        "SnO2": 100.0
-      },
-      "loi": 0.0,
-      "name": "Tin Oxide"
-    },
-    "titanium_dioxide": {
-      "aliases": [
-        "titanium dioxide"
-      ],
-      "analysis": {
-        "TiO2": 100.0
-      },
-      "loi": 0.0,
-      "name": "Titanium Dioxide"
+        "kona f-4 feldspar discontinued",
+        "kona f4 feldspar",
+        "kona f-4 feldspar"
+      ]
     },
     "whiting": {
-      "aliases": [
-        "Whiting (Calcium Carbonate)",
-        "calcium carbonate",
-        "whiting",
-        "marblewhite whiting",
-        "whiting calcium carbonate"
-      ],
+      "name": "Whiting",
       "analysis": {
-        "CaO": 56.1
+        "CaO": 56.0
       },
-      "loi": 43.9,
-      "name": "Whiting"
+      "aliases": [
+        "calcium carbonate",
+        "marblewhite whiting",
+        "whiting calcium carbonate",
+        "whiting",
+        "whiting (calcium carbonate)"
+      ]
+    },
+    "dolomite": {
+      "name": "Dolomite",
+      "analysis": {
+        "CaO": 30.4,
+        "MgO": 21.7
+      },
+      "aliases": [
+        "dolomite"
+      ]
+    },
+    "talc": {
+      "name": "Talc",
+      "analysis": {
+        "MgO": 32.0,
+        "SiO2": 60.0
+      },
+      "aliases": [
+        "amtalc-c98 talc",
+        "amtalc",
+        "c98 talc",
+        "talc"
+      ]
     },
     "wollastonite": {
+      "name": "Wollastonite",
+      "analysis": {
+        "CaO": 48.0,
+        "SiO2": 52.0
+      },
       "aliases": [
-        "wollastonite",
         "vansil w-30 wollastonite",
         "vansil w30",
-        "nyad wollastonite"
-      ],
+        "nyad wollastonite",
+        "wollastonite"
+      ]
+    },
+    "strontium_carbonate": {
+      "name": "Strontium Carbonate",
       "analysis": {
-        "CaO": 48.28,
-        "SiO2": 51.72
+        "SrO": 70.0
       },
-      "loi": 0.0,
-      "name": "Wollastonite"
+      "aliases": [
+        "strontium carbonate"
+      ]
+    },
+    "barium_carbonate": {
+      "name": "Barium Carbonate",
+      "analysis": {
+        "BaO": 77.0
+      },
+      "aliases": [
+        "barium carbonate"
+      ]
+    },
+    "lithium_carbonate": {
+      "name": "Lithium Carbonate",
+      "analysis": {
+        "Li2O": 40.0
+      },
+      "aliases": [
+        "lithium carbonate"
+      ]
     },
     "zinc_oxide": {
+      "name": "Zinc Oxide",
+      "analysis": {
+        "ZnO": 99.9
+      },
       "aliases": [
         "zinc oxide"
-      ],
-      "analysis": {
-        "ZnO": 100.0
-      },
-      "loi": 0.0,
-      "name": "Zinc Oxide"
-    },
-    "zircopax": {
-      "aliases": [
-        "zircopax",
-        "zirconium silicate",
-        "ultrox",
-        "superpax",
-        "opax",
-        "zirconium silicate opacifier"
-      ],
-      "analysis": {
-        "SiO2": 32.79,
-        "ZrO2": 67.21
-      },
-      "loi": 0.0,
-      "name": "Zircopax"
-    },
-    "ep kaolin": {
-      "name": "EP Kaolin",
-      "aliases": [
-        "epk",
-        "edgar plastic kaolin"
-      ],
-      "loi": 13.0,
-      "analysis": {
-        "SiO2": 45.73,
-        "Al2O3": 37.36,
-        "MgO": 0.1,
-        "CaO": 0.18,
-        "K2O": 0.35,
-        "Na2O": 0.07,
-        "P2O5": 0.26,
-        "Fe2O3": 0.76,
-        "TiO2": 0.38
-      }
-    },
-    "grolleg kaolin": {
-      "name": "Grolleg Kaolin",
-      "aliases": [],
-      "loi": 13.5,
-      "analysis": {
-        "SiO2": 47.92,
-        "Al2O3": 36.94,
-        "MgO": 0.3,
-        "CaO": 0.1,
-        "K2O": 1.9,
-        "Na2O": 0.1,
-        "Fe2O3": 0.7,
-        "TiO2": 0.3
-      }
-    },
-    "g200 hp": {
-      "name": "G200 HP Feldspar",
-      "aliases": [
-        "g200 hp feldspar",
-        "g200 hp"
-      ],
-      "loi": 0.0,
-      "analysis": {
-        "SiO2": 66.0,
-        "Al2O3": 18.3,
-        "CaO": 0.3,
-        "K2O": 14.2,
-        "Na2O": 0.9,
-        "Fe2O3": 0.09
-      }
-    },
-    "red iron oxide": {
-      "name": "Red Iron Oxide",
-      "aliases": [
-        "rio",
-        "iron oxide"
-      ],
-      "loi": 0.0,
-      "analysis": {
-        "Fe2O3": 95.0
-      }
-    },
-    "ferro frit 3124": {
-      "name": "Ferro Frit 3124",
-      "aliases": [
-        "frit 3124"
-      ],
-      "loi": 0.0,
-      "analysis": {
-        "SiO2": 55.3,
-        "Al2O3": 9.9,
-        "B2O3": 13.77,
-        "CaO": 14.07,
-        "Na2O": 6.28,
-        "K2O": 0.68
-      }
-    },
-    "tile_6_kaolin": {
-      "name": "Tile #6 Kaolin",
-      "aliases": [
-        "tile #6 kaolin",
-        "tile 6 kaolin",
-        "#6 tile kaolin",
-        "tile 6",
-        "tile#6 kaolin"
-      ],
-      "loi": 13.5,
-      "analysis": {
-        "SiO2": 45.5,
-        "Al2O3": 38.1,
-        "CaO": 0.3,
-        "MgO": 0.4,
-        "Na2O": 0.1,
-        "TiO2": 1.4,
-        "Fe2O3": 0.5
-      }
-    },
-    "chrome_oxide": {
-      "name": "Chrome Oxide",
-      "aliases": [
-        "chrome oxide",
-        "chromium oxide",
-        "Cr2O3"
-      ],
-      "loi": 0.0,
-      "analysis": {
-        "Cr2O3": 99.0
-      }
-    },
-    "cobalt_oxide": {
-      "name": "Cobalt Oxide",
-      "aliases": [
-        "cobalt oxide",
-        "cobalt(ii) oxide",
-        "CoO"
-      ],
-      "loi": 0.0,
-      "analysis": {
-        "CoO": 100.0
-      }
-    },
-    "black_nickel_oxide": {
-      "name": "Black Nickel Oxide",
-      "aliases": [
-        "black nickel oxide",
-        "nickel oxide",
-        "NiO"
-      ],
-      "loi": 0.0,
-      "analysis": {
-        "NiO": 100.0
-      }
+      ]
     },
     "magnesium_carbonate": {
       "name": "Magnesium Carbonate",
+      "analysis": {
+        "MgO": 42.0
+      },
       "aliases": [
         "magnesium carbonate"
-      ],
-      "loi": 56.0,
-      "analysis": {
-        "MgO": 40.0
-      }
-    },
-    "silicon_carbide": {
-      "name": "Silicon Carbide",
-      "aliases": [
-        "silicon carbide"
-      ],
-      "loi": 100.0,
-      "analysis": {}
+      ]
     },
     "ferro_frit_3134": {
       "name": "Ferro Frit 3134",
-      "aliases": [
-        "ferro frit 3134",
-        "frit 3134",
-        "fusion frit 3134"
-      ],
-      "loi": 0.0,
       "analysis": {
         "SiO2": 45.56,
         "Al2O3": 2.0,
         "B2O3": 22.79,
         "CaO": 19.51,
         "Na2O": 10.14
-      }
+      },
+      "aliases": [
+        "ferro frit 3134",
+        "frit 3134"
+      ]
+    },
+    "ferro_frit_3124": {
+      "name": "Ferro Frit 3124",
+      "analysis": {
+        "SiO2": 55.0,
+        "Al2O3": 8.0,
+        "CaO": 22.0,
+        "Na2O": 5.0,
+        "B2O3": 5.0
+      },
+      "aliases": [
+        "ferro frit 3124",
+        "frit 3124"
+      ]
     },
     "ferro_frit_3110": {
       "name": "Ferro Frit 3110",
-      "aliases": [
-        "ferro frit 3110",
-        "frit 3110"
-      ],
-      "loi": 0.0,
       "analysis": {
         "SiO2": 42.5,
         "Al2O3": 4.8,
@@ -905,151 +232,466 @@
         "SrO": 3.0,
         "Na2O": 3.2,
         "K2O": 2.0
-      }
+      },
+      "aliases": [
+        "ferro frit 3110",
+        "frit 3110"
+      ]
     },
     "ferro_frit_3195": {
       "name": "Ferro Frit 3195",
+      "analysis": {
+        "SiO2": 45.0,
+        "Al2O3": 3.0,
+        "B2O3": 15.0,
+        "CaO": 20.0,
+        "ZnO": 8.0,
+        "Na2O": 5.0,
+        "K2O": 2.0
+      },
       "aliases": [
         "ferro frit 3195",
         "frit 3195"
-      ],
-      "loi": 0.0,
+      ]
+    },
+    "gerstley_borate": {
+      "name": "Gerstley Borate",
       "analysis": {
-        "SiO2": 49.0,
-        "Al2O3": 7.0,
-        "B2O3": 11.0,
-        "CaO": 18.0,
-        "ZnO": 6.0,
-        "K2O": 3.0,
-        "Na2O": 4.0
-      }
+        "CaO": 26.0,
+        "B2O3": 26.0,
+        "Na2O": 5.0,
+        "SiO2": 16.0
+      },
+      "aliases": [
+        "gerstley borate"
+      ]
     },
     "gillespie_borate": {
       "name": "Gillespie Borate",
+      "analysis": {
+        "CaO": 28.0,
+        "B2O3": 25.0,
+        "Na2O": 4.0,
+        "SiO2": 14.0
+      },
       "aliases": [
         "gillespie borate"
-      ],
-      "loi": 20.0,
+      ]
+    },
+    "colemanite": {
+      "name": "Colemanite",
       "analysis": {
-        "B2O3": 30.0,
+        "B2O3": 40.0,
         "CaO": 30.0,
-        "MgO": 3.0,
         "SiO2": 5.0
-      }
-    },
-    "yellow_iron_oxide": {
-      "name": "Yellow Iron Oxide",
+      },
       "aliases": [
-        "yellow iron oxide"
-      ],
-      "loi": 10.0,
-      "analysis": {
-        "Fe2O3": 85.0
-      }
+        "colemanite"
+      ]
     },
-    "black_iron_oxide": {
-      "name": "Black Iron Oxide",
-      "aliases": [
-        "black iron oxide",
-        "magnetite",
-        "Fe3O4"
-      ],
-      "loi": 0.0,
+    "borax": {
+      "name": "Borax",
       "analysis": {
-        "FeO": 31.0,
-        "Fe2O3": 69.0
-      }
-    },
-    "manganese_carbonate": {
-      "name": "Manganese Carbonate",
+        "Na2O": 16.0,
+        "B2O3": 36.0
+      },
       "aliases": [
-        "manganese carbonate"
-      ],
-      "loi": 40.0,
-      "analysis": {
-        "MnO": 60.0
-      }
-    },
-    "g_200_feldspar": {
-      "name": "G-200 Feldspar",
-      "aliases": [
-        "g-200 feldspar",
-        "g200 feldspar"
-      ],
-      "loi": 0.0,
-      "analysis": {
-        "SiO2": 66.0,
-        "Al2O3": 18.3,
-        "CaO": 0.3,
-        "K2O": 14.2,
-        "Na2O": 0.9,
-        "Fe2O3": 0.09
-      }
-    },
-    "feldspar": {
-      "name": "Feldspar",
-      "aliases": [
-        "feldspar"
-      ],
-      "loi": 0.0,
-      "analysis": {
-        "SiO2": 65.0,
-        "Al2O3": 18.0,
-        "K2O": 12.0,
-        "Na2O": 4.0
-      }
-    },
-    "vansil_w30_wollastonite": {
-      "name": "Vansil W-30 Wollastonite",
-      "aliases": [
-        "vansil w-30 wollastonite"
-      ],
-      "loi": 0.0,
-      "analysis": {
-        "SiO2": 50.0,
-        "CaO": 45.0
-      }
-    },
-    "cornwall_stone": {
-      "name": "Cornwall Stone",
-      "aliases": [
-        "cornwall stone",
-        "cornish stone"
-      ],
-      "loi": 0.0,
-      "analysis": {
-        "SiO2": 73.0,
-        "Al2O3": 14.0,
-        "K2O": 4.0,
-        "Na2O": 3.0,
-        "CaO": 2.0
-      }
-    },
-    "ultrox": {
-      "name": "Ultrox",
-      "aliases": [
-        "ultrox",
-        "ultrox 500w",
-        "ultrox 1000w",
-        "zirconium opacifier"
-      ],
-      "loi": 0.0,
-      "analysis": {
-        "ZrO2": 65.0,
-        "SiO2": 35.0
-      }
+        "borax"
+      ]
     },
     "calcium_borate_frit": {
       "name": "Calcium Borate Frit",
-      "aliases": [
-        "calcium borate frit"
-      ],
-      "loi": 0.0,
       "analysis": {
         "CaO": 40.0,
         "B2O3": 35.0,
         "SiO2": 15.0
-      }
+      },
+      "aliases": [
+        "calcium borate frit"
+      ]
+    },
+    "soda_ash": {
+      "name": "Soda Ash",
+      "analysis": {
+        "Na2O": 58.5
+      },
+      "aliases": [
+        "soda ash"
+      ]
+    },
+    "ep_kaolin": {
+      "name": "EP Kaolin",
+      "analysis": {
+        "Al2O3": 39.5,
+        "SiO2": 45.5
+      },
+      "aliases": [
+        "epk kaolin",
+        "ep kaolin"
+      ]
+    },
+    "kaolin": {
+      "name": "Kaolin",
+      "analysis": {
+        "Al2O3": 39.5,
+        "SiO2": 45.5
+      },
+      "aliases": [
+        "kaolin eckalite 1",
+        "helmer kaolin",
+        "lpc kaolin",
+        "velvacast kaolin",
+        "kaolin"
+      ]
+    },
+    "grolleg_kaolin": {
+      "name": "Grolleg Kaolin",
+      "analysis": {
+        "Al2O3": 38.0,
+        "SiO2": 47.0
+      },
+      "aliases": [
+        "grolleg kaolin"
+      ]
+    },
+    "tile_6_kaolin": {
+      "name": "Tile #6 Kaolin",
+      "analysis": {
+        "Al2O3": 37.0,
+        "SiO2": 48.0
+      },
+      "aliases": [
+        "#6 tile kaolin",
+        "tile 6",
+        "tile#6 kaolin",
+        "tile 6 kaolin",
+        "tile #6 kaolin"
+      ]
+    },
+    "calcined_kaolin": {
+      "name": "Calcined Kaolin",
+      "analysis": {
+        "Al2O3": 45.0,
+        "SiO2": 52.0
+      },
+      "aliases": [
+        "calcined kaolin"
+      ]
+    },
+    "ball_clay": {
+      "name": "Ball Clay",
+      "analysis": {
+        "SiO2": 55.0,
+        "Al2O3": 30.0
+      },
+      "aliases": [
+        "xx sagger ball clay",
+        "kentucky om 4 ball clay",
+        "om4 ball clay",
+        "om 4 ball clay",
+        "kentucky om #4 ball clay",
+        "kentucky om 4 ball clay",
+        "ball clay"
+      ]
+    },
+    "bentonite": {
+      "name": "Bentonite",
+      "analysis": {
+        "SiO2": 60.0,
+        "Al2O3": 20.0,
+        "Fe2O3": 4.0,
+        "MgO": 2.0,
+        "Na2O": 2.0,
+        "CaO": 2.0
+      },
+      "aliases": [
+        "bentonite"
+      ]
+    },
+    "china_clay": {
+      "name": "China Clay",
+      "analysis": {
+        "Al2O3": 38.0,
+        "SiO2": 47.0
+      },
+      "aliases": [
+        "cc_china_clay",
+        "china clay cc50 puraflo",
+        "china clay ultrafine testing",
+        "china clay"
+      ]
+    },
+    "silica": {
+      "name": "Silica",
+      "analysis": {
+        "SiO2": 99.8
+      },
+      "aliases": [
+        "quartz",
+        "silica sand",
+        "silica",
+        "silica (325 mesh)"
+      ]
+    },
+    "alumina": {
+      "name": "Alumina",
+      "analysis": {
+        "Al2O3": 99.0
+      },
+      "aliases": [
+        "alumina"
+      ]
+    },
+    "red_iron_oxide": {
+      "name": "Red Iron Oxide",
+      "analysis": {
+        "Fe2O3": 96.0
+      },
+      "aliases": [
+        "iron oxide",
+        "red iron oxide"
+      ]
+    },
+    "black_iron_oxide": {
+      "name": "Black Iron Oxide",
+      "analysis": {
+        "FeO": 31.0,
+        "Fe2O3": 69.0
+      },
+      "aliases": [
+        "black iron oxide"
+      ]
+    },
+    "yellow_iron_oxide": {
+      "name": "Yellow Iron Oxide",
+      "analysis": {
+        "Fe2O3": 85.0
+      },
+      "aliases": [
+        "yellow iron oxide"
+      ]
+    },
+    "titanium_dioxide": {
+      "name": "Titanium Dioxide",
+      "analysis": {
+        "TiO2": 99.5
+      },
+      "aliases": [
+        "titanium dioxide"
+      ]
+    },
+    "rutile": {
+      "name": "Rutile",
+      "analysis": {
+        "TiO2": 95.0,
+        "Fe2O3": 2.0
+      },
+      "aliases": [
+        "rutile"
+      ]
+    },
+    "tin_oxide": {
+      "name": "Tin Oxide",
+      "analysis": {
+        "SnO2": 99.0
+      },
+      "aliases": [
+        "tin oxide"
+      ]
+    },
+    "chrome_oxide": {
+      "name": "Chrome Oxide",
+      "analysis": {
+        "Cr2O3": 99.0
+      },
+      "aliases": [
+        "chrome oxide",
+        "chromium oxide"
+      ]
+    },
+    "cobalt_carbonate": {
+      "name": "Cobalt Carbonate",
+      "analysis": {
+        "CoO": 63.0
+      },
+      "aliases": [
+        "cobalt carbonate"
+      ]
+    },
+    "cobalt_oxide": {
+      "name": "Cobalt Oxide",
+      "analysis": {
+        "CoO": 99.0
+      },
+      "aliases": [
+        "cobalt oxide"
+      ]
+    },
+    "copper_carbonate": {
+      "name": "Copper Carbonate",
+      "analysis": {
+        "CuO": 64.0
+      },
+      "aliases": [
+        "copper carbonate"
+      ]
+    },
+    "black_copper_oxide": {
+      "name": "Black Copper Oxide",
+      "analysis": {
+        "CuO": 99.0
+      },
+      "aliases": [
+        "black copper oxide"
+      ]
+    },
+    "manganese_dioxide": {
+      "name": "Manganese Dioxide",
+      "analysis": {
+        "MnO2": 99.0
+      },
+      "aliases": [
+        "manganese dioxide"
+      ]
+    },
+    "manganese_carbonate": {
+      "name": "Manganese Carbonate",
+      "analysis": {
+        "MnO": 55.0
+      },
+      "aliases": [
+        "manganese carbonate"
+      ]
+    },
+    "black_nickel_oxide": {
+      "name": "Black Nickel Oxide",
+      "analysis": {
+        "NiO": 99.0
+      },
+      "aliases": [
+        "black nickel oxide"
+      ]
+    },
+    "silicon_carbide": {
+      "name": "Silicon Carbide",
+      "analysis": {
+        "SiO2": 99.0
+      },
+      "aliases": [
+        "silicon carbide"
+      ]
+    },
+    "zircopax": {
+      "name": "Zircopax",
+      "analysis": {
+        "ZrO2": 65.0,
+        "SiO2": 35.0
+      },
+      "aliases": [
+        "ultrox",
+        "ultrox 500w",
+        "ultrox 1000w",
+        "superpax",
+        "opax",
+        "zirconium silicate opacifier",
+        "zircopax"
+      ]
+    },
+    "spodumene": {
+      "name": "Spodumene",
+      "analysis": {
+        "SiO2": 65.0,
+        "Al2O3": 28.0,
+        "Li2O": 8.0
+      },
+      "aliases": [
+        "spodumene"
+      ]
+    },
+    "petalite": {
+      "name": "Petalite",
+      "analysis": {
+        "SiO2": 78.0,
+        "Al2O3": 17.0,
+        "Li2O": 5.0
+      },
+      "aliases": [
+        "petalite"
+      ]
+    },
+    "cornwall_stone": {
+      "name": "Cornwall Stone",
+      "analysis": {
+        "SiO2": 75.0,
+        "Al2O3": 14.0,
+        "K2O": 5.0,
+        "Na2O": 3.0,
+        "CaO": 2.0
+      },
+      "aliases": [
+        "cornwall stone"
+      ]
+    },
+    "bone_ash": {
+      "name": "Bone Ash",
+      "analysis": {
+        "CaO": 54.0,
+        "P2O5": 42.0
+      },
+      "aliases": [
+        "bone ash"
+      ]
+    },
+    "wood_ash": {
+      "name": "Wood Ash",
+      "analysis": {
+        "CaO": 35.0,
+        "SiO2": 20.0,
+        "K2O": 10.0,
+        "MgO": 5.0,
+        "P2O5": 5.0
+      },
+      "aliases": [
+        "applewood_ash",
+        "mixed wood ash",
+        "hardwood ash",
+        "wood ash"
+      ]
+    },
+    "epsom_salts": {
+      "name": "Epsom Salts",
+      "analysis": {
+        "MgO": 16.0
+      },
+      "aliases": [
+        "epsom salts"
+      ]
+    },
+    "redart": {
+      "name": "Redart",
+      "analysis": {
+        "SiO2": 65.0,
+        "Al2O3": 18.0,
+        "Fe2O3": 6.0,
+        "CaO": 1.0,
+        "MgO": 1.0
+      },
+      "aliases": [
+        "redart"
+      ]
+    },
+    "goldart": {
+      "name": "Goldart",
+      "analysis": {
+        "SiO2": 62.0,
+        "Al2O3": 20.0,
+        "Fe2O3": 5.0,
+        "TiO2": 1.5,
+        "MgO": 1.0
+      },
+      "aliases": [
+        "goldart"
+      ]
     }
   }
 }

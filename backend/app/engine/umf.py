@@ -38,6 +38,12 @@ STABILIZER_OXIDES = {"Al2O3", "B2O3", "Fe2O3", "Cr2O3"}
 FORMER_OXIDES = {"SiO2"}
 OTHER_OXIDES = {"TiO2", "ZrO2", "SnO2", "P2O5", "MnO", "MnO2", "FeO", "CoO", "CuO", "Cu2O", "NiO", "CdO"}
 
+UMF_OXIDES = [
+    "SiO2", "Al2O3", "B2O3", "Li2O", "Na2O", "K2O", "MgO", "CaO",
+    "SrO", "BaO", "ZnO", "TiO2", "Fe2O3", "P2O5", "SnO2", "Cr2O3",
+    "ZrO2", "PbO",
+]
+
 ALL_OXIDE_GROUPS = {
     "fluxes": FLUX_OXIDES,
     "stabilizers": STABILIZER_OXIDES,
@@ -155,11 +161,13 @@ def _normalize_moles(moles: dict[str, float]) -> UMFAnalysis:
     al2o3 = norm.get("Al2O3", 0.001)
     si_al_ratio = round(sio2 / al2o3, 2)
 
+    has_others = bool(grouped["others"])
     return UMFAnalysis(
         unity_molecular_formula=UnityMolecularFormula(
             fluxes=grouped["fluxes"],
             stabilizers=grouped["stabilizers"],
             formers=grouped["formers"],
+            others=grouped["others"],
         ),
         calculated_ratios=CalculatedRatios(silica_alumina_ratio=si_al_ratio),
     )
