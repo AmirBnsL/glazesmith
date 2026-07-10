@@ -18,14 +18,15 @@ def _identify_top_variables(recipe: list[dict], n_vars: int = 3) -> list[int]:
     """Return indices of ingredients to vary — at most n_vars, and at most N-1.
 
     Leaves at least one ingredient as a filler so the sum can be normalized to 100.
+    Filters out ingredients with 0% to avoid empty grids.
     """
     n_ingredients = len(recipe)
     if n_ingredients == 0:
         return []
     n = min(n_vars, max(1, n_ingredients - 1))
-    indexed = [(i, item["percentage"]) for i, item in enumerate(recipe)]
+    indexed = [(i, item["percentage"]) for i, item in enumerate(recipe) if item["percentage"] > 0]
     indexed.sort(key=lambda x: x[1], reverse=True)
-    return [idx for idx, _ in indexed[:n] if indexed[0][1] > 0]
+    return [idx for idx, _ in indexed[:n]]
 
 
 def _apply_change(pct: float, step: int) -> float:
@@ -49,10 +50,13 @@ def _normalize_total(recipe: list[dict], var_indices: list[int], var_values: lis
     non_var_current = sum(candidate[i]["percentage"] for i in non_var_indices)
     non_var_target = 100.0 - sum(var_values)
 
-    if non_var_current > 0 and non_var_target >= 0:
+    if non_var_current > 0 and non_var_target > 0:
         scale = non_var_target / non_var_current
         for i in non_var_indices:
             candidate[i]["percentage"] = round(candidate[i]["percentage"] * scale, 1)
+    elif non_var_target <= 0:
+        for i in non_var_indices:
+            candidate[i]["percentage"] = 0.0
 
     return candidate
 
@@ -66,12 +70,7 @@ def _compute_score(
     surface_weight: float = 1.0,
     stress_weight: float = 1.0,
 ) -> float:
-    """Combined score: reward surface match, penalize crazing stress.
-
-    Args:
-        surface_weight: Higher = prioritize hitting target surface over stress.
-        stress_weight: Higher = penalize crazing stress more heavily.
-    """
+    """Combined score: reward surface match, penalize crazing stress."""
     crazing_penalty = max(0, stress_delta) / max(target_cte_max, 1e-10)
     surface_match = 1.0 if surface_class == target_surface else 0.0
     return surface_weight * surface_match * surface_confidence - stress_weight * crazing_penalty
@@ -84,8 +83,7 @@ def _recipe_signature(recipe: list[dict]) -> str:
 
 def optimize(
     recipe: list[dict],
-    cte_fn: Callable[[list[dict]], dict],
-    gnn_fn: Callable[[list[dict]], dict],
+    eval_fn: Callable[[list[dict]], dict],
     target_surface: str = "glossy",
     target_cte_max: float = 7.30e-6,
     n_vars: int = 3,
@@ -98,20 +96,18 @@ def optimize(
 
     Args:
         recipe: Input recipe as [{material, percentage}, ...].
-        cte_fn: Deterministic CTE function, returns {"cte": float, "stress_delta": float}.
-        gnn_fn: GNN inference function, returns {"surface_class": str, "surface_confidence": float, ...}.
+        eval_fn: Evaluation function returning {"cte": float, "stress_delta": float,
+                  "surface_class": str, "surface_confidence": float}.
         target_surface: Desired surface finish to optimize for.
         target_cte_max: Maximum CTE before crazing risk.
         n_vars: Number of ingredients to vary (default 3).
-        steps: Relative percentage steps to search (default ±5/10/15).
+        steps: Relative percentage steps to search (default +-5/10/15).
         max_candidates: Number of candidates to return (default 3).
         surface_weight: Score weight for hitting target surface.
         stress_weight: Score weight for minimizing crazing stress.
 
     Returns:
         Top N candidate recipes with metrics, sorted by score descending.
-        Each candidate is {"recipe": [...], "stress_delta": float, "surface_class": str,
-                          "surface_confidence": float, "score": float}.
     """
     steps = steps or DEFAULT_STEPS
     var_indices = _identify_top_variables(recipe, n_vars)
@@ -122,9 +118,15 @@ def optimize(
     grids = []
     for recipe_idx in var_indices:
         base_pct = recipe[recipe_idx]["percentage"]
+        if base_pct <= 0:
+            continue
         grid = [_apply_change(base_pct, s) for s in steps]
         grid = sorted(set(round(g, 1) for g in grid if g > 0))
-        grids.append(grid)
+        if grid:
+            grids.append(grid)
+
+    if not grids:
+        return []
 
     seen: set[str] = set()
     scored: list[dict] = []
@@ -143,14 +145,13 @@ def optimize(
             continue
 
         try:
-            cte_result = cte_fn(candidate)
-            gnn_result = gnn_fn(candidate)
+            result = eval_fn(candidate)
         except Exception:
             continue
 
-        stress_delta = cte_result.get("stress_delta", 0)
-        surface_class = gnn_result.get("surface_class", "unknown")
-        surface_confidence = gnn_result.get("surface_confidence", 0)
+        stress_delta = result.get("stress_delta", 0)
+        surface_class = result.get("surface_class", "unknown")
+        surface_confidence = result.get("surface_confidence", 0)
 
         score = _compute_score(
             stress_delta,
