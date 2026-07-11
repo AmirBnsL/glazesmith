@@ -20,11 +20,11 @@ train:
 
 # Run without SDXL (CPU-only, no GPU required)
 up-lite:
-	docker compose up -d backend frontend
+	docker compose up -d
 
 # Full stack with SDXL on GPU
 up-full:
-	docker compose up -d
+	docker compose up -d --profile full
 
 clean:
 	docker compose down -v --rmi local

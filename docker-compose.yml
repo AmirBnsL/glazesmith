@@ -11,11 +11,8 @@ services:
       - .env
     environment:
       - SDXL_SERVICE_URL=http://sdxl:8001
-    depends_on:
-      sdxl:
-        condition: service_started
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 15s
       timeout: 5s
       retries: 5
@@ -34,6 +31,7 @@ services:
       - NEXT_PUBLIC_API_URL=http://backend:8000
 
   sdxl:
+    profiles: ["full"]
     build:
       context: ./sdxl-service
       dockerfile: Dockerfile
@@ -53,7 +51,7 @@ services:
               count: 1
               capabilities: [gpu]
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
       interval: 30s
       timeout: 10s
       retries: 10
