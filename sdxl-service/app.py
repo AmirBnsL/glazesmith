@@ -1,7 +1,12 @@
 """SDXL image generation service for GlazeSmith.
 
-Runs on AMD ROCm GPU. Loads SDXL model on startup,
-generates ceramic glaze visualizations from prompts.
+Runs on AMD ROCm GPU (MI300X). Loads Stable Diffusion XL on startup
+using PyTorch with ROCm/HIP backend, generates ceramic glaze
+visualizations from text prompts.
+
+Hardware: AMD Instinct MI300X (192 GB HBM3) via ROCm 6.3
+Framework: PyTorch 2.4 with ROCm backend (torch.version.hip)
+Model: stabilityai/stable-diffusion-xl-base-1.0 (FP16, ~7 GB VRAM)
 """
 
 import io
@@ -24,9 +29,41 @@ IMAGES_DIR.mkdir(exist_ok=True)
 pipeline: StableDiffusionXLPipeline | None = None
 
 
+def get_device_info() -> dict:
+    """Detect AMD ROCm GPU vs CUDA vs CPU."""
+    if torch.cuda.is_available():
+        hip_version = getattr(torch.version, "hip", None)
+        if hip_version:
+            # Running on AMD ROCm (HIP maps to CUDA API)
+            gpu_name = torch.cuda.get_device_name(0)
+            return {
+                "device": "rocm",
+                "hip_version": hip_version,
+                "gpu": gpu_name,
+                "vram_gb": round(torch.cuda.get_device_properties(0).total_mem / 1e9, 1),
+            }
+        else:
+            gpu_name = torch.cuda.get_device_name(0)
+            return {"device": "cuda", "gpu": gpu_name}
+    return {"device": "cpu"}
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global pipeline
+    device_info = get_device_info()
+    logger.info("Detected device: %s", device_info)
+
+    if device_info["device"] == "rocm":
+        logger.info(
+            "AMD ROCm GPU detected: %s (HIP %s, %.1f GB VRAM)",
+            device_info["gpu"], device_info["hip_version"], device_info["vram_gb"],
+        )
+    elif device_info["device"] == "cuda":
+        logger.info("NVIDIA CUDA GPU detected: %s", device_info["gpu"])
+    else:
+        logger.warning("No GPU detected — SDXL will run on CPU (very slow)")
+
     logger.info("Loading SDXL model...")
     try:
         pipe = StableDiffusionXLPipeline.from_pretrained(
@@ -36,8 +73,9 @@ async def lifespan(app: FastAPI):
             use_safetensors=True,
         )
         if torch.cuda.is_available():
+            # On ROCm, torch.cuda maps to HIP — "cuda" device works for both
             pipe = pipe.to("cuda")
-            logger.info("SDXL loaded on GPU")
+            logger.info("SDXL loaded on GPU (%s)", device_info["device"].upper())
         else:
             logger.warning("SDXL loaded on CPU — will be slow")
         pipeline = pipe
@@ -62,10 +100,11 @@ class GenerateResponse(BaseModel):
 
 @app.get("/health")
 async def health():
+    device_info = get_device_info()
     return {
         "status": "ok",
         "model_loaded": pipeline is not None,
-        "device": "cuda" if torch.cuda.is_available() else "cpu",
+        **device_info,
     }
 
 

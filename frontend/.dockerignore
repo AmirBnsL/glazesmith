@@ -1,10 +1,24 @@
+# Dependencies & build output (rebuilt inside container)
 node_modules/
 .next/
 out/
 build/
+
+# Environment files
 .env
 .env.local
 .env.*.local
+
+# Scratch & reference files (not needed for production)
+scratch_*
+later_feat.txt
+reference/
+3D/
+GEMINI.md
+
+# OS & IDE
+.DS_Store
+Thumbs.db
 *.log
 .git/
 .gitignore

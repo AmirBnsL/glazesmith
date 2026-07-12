@@ -1,3 +1,9 @@
+"""GlazeSmith backend configuration.
+
+LLM inference runs on Fireworks AI, which serves models on AMD Instinct
+MI300X GPUs. The SDXL service runs locally on AMD ROCm GPU.
+All keys are loaded from .env — see .env.example for the template.
+"""
 from pydantic_settings import BaseSettings
 
 

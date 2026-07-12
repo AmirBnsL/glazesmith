@@ -1,3 +1,6 @@
+# SDXL service dependencies
+# Note: PyTorch is provided by the ROCm base image (rocm/pytorch:rocm6.3.2)
+# and is NOT installed via pip. The base image includes torch with HIP backend.
 fastapi>=0.115.0
 uvicorn[standard]>=0.32.0
 diffusers>=0.30.0

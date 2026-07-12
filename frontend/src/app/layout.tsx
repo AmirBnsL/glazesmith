@@ -11,6 +11,9 @@ const accentFont = Caveat({ subsets: ["latin"], variable: "--font-accent" });
 export const metadata: Metadata = {
   title: "GlazeSmith | AI Glaze Chemistry Agent",
   description: "AI-powered ceramic glaze formulation, defect diagnosis, and image generation",
+  icons: {
+    icon: "/assets/flower.svg",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

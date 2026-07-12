@@ -1,6 +1,8 @@
 import type { PredictRequest, PredictResponse, GenerateImageRequest, GenerateImageResponse } from "./types";
 
-const BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+// Use relative URLs — Next.js rewrites in next.config.ts proxy /api/* to the backend.
+// This is critical for Docker where the browser can't resolve internal hostnames.
+const BASE = "";
 
 export async function predictGlaze(req: PredictRequest): Promise<PredictResponse> {
   const res = await fetch(`${BASE}/api/predict-glaze`, {

@@ -1,3 +1,8 @@
+# GlazeSmith Docker Compose — AMD ROCm GPU Stack
+# Backend (CPU): FastAPI + XGBoost + Faiss
+# Frontend: Next.js
+# SDXL (AMD ROCm GPU): Stable Diffusion XL on AMD Instinct MI300X
+# Use `docker compose --profile full up` to enable GPU SDXL service
 services:
   backend:
     build:

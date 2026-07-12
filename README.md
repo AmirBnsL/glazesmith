@@ -12,13 +12,20 @@ Ceramic glazes fail in predictable ways. A glaze that crazes (develops a network
 
 **Data flow:** User recipe → UMF conversion → deterministic CTE + stress delta → XGBoost 3-head classification → Faiss K-NN neighbour search → Pareto grid search optimization → SDXL visualization → LLM interpreter proposes adjustments → real pipeline verifies each → LLM reviews verified results → user receives final recommendations with verified metrics. User can then chat interactively, with each turn grounding the LLM in the same diagnostic context and verifying any proposed changes through the pipeline.
 
-## AMD Resource Usage
+## AMD Compute Usage
 
-This project uses **Fireworks AI** as its LLM provider. Fireworks serves its models on **AMD Instinct MI300X GPUs**, which is how our LLM agent calls make use of AMD compute for this hackathon track.
+This project makes extensive use of AMD hardware across three distinct phases of the pipeline:
 
-- All LLM calls are made from the backend, in [`backend/`](./backend) — see `app/agent/core.py` for the Fireworks client and `app/agent/prompts.py` for the prompt construction.
-- The Fireworks API key is supplied via `FIREWORKS_API_KEY` in `backend/.env`.
-- The SDXL visualization service (`sdxl-service/`) is designed to run on AMD ROCm GPUs with 192 GB HBM3 (MI300X), enabling co-location of GNN inference, Faiss index, SDXL, and preprocessing in VRAM simultaneously.
+1. **Model Training (AMD ROCm Jupyter Instance)**
+   The XGBoost ML classifiers (surface, transparency, color family) were trained on an AMD-provided Jupyter notebook instance powered by a ROCm GPU.
+   * **Evidence:** We have committed the exact training notebook, including execution cells showing `rocm-smi` and PyTorch `rocm6.3` device detection logs. You can inspect this at [`backend/training/notebooks/training_evidence.ipynb`](./backend/training/notebooks/training_evidence.ipynb).
+   * *Note on Inference:* Because XGBoost inference is extremely lightweight (<10ms per request), the production FastAPI backend runs inference on the CPU. The GPU was utilized strictly for the heavy lifting of training via Optuna grid search.
+
+2. **SDXL Image Generation (Local AMD ROCm GPU)**
+   The SDXL visualization service (`sdxl-service/`) runs locally on AMD ROCm hardware. It uses the `rocm/pytorch:rocm6.3.2` base Docker image and expects GPU passthrough (e.g., AMD Instinct MI300X with 192GB VRAM) to run `stabilityai/stable-diffusion-xl-base-1.0` in FP16.
+
+3. **LLM Interpreter (Fireworks AI on AMD Instinct)**
+   Our conversational agent and pipeline verifier uses the DeepSeek-V4-Flash model, served via **Fireworks AI**. Fireworks explicitly serves these models on **AMD Instinct MI300X GPUs**.
 
 ## Main Code Path
 
@@ -59,12 +66,12 @@ GlazeSmith/
 └── ARCHITECTURE.md    Full specification document
 ```
 
-## External Services Used
+## External Services
 
 | Service | Purpose | Required? |
 |---|---|---|
-| [Fireworks AI](https://fireworks.ai) | LLM inference (DeepSeek-V4-Flash) on AMD Instinct GPUs — generates analysis and recipe adjustments | Yes |
-| [HuggingFace](https://huggingface.co) | GlazyBench dataset — 16,781 glaze recipes with UMF vectors and surface/transparency/color labels | Auto-downloaded |
+| **Fireworks AI** | LLM inference provider. Used to run the agentic loop (proposing adjustments, reviewing pipeline verifications) on AMD Instinct GPUs. This is an external API call separate from our local ROCm usage. | **Yes** |
+| **HuggingFace** | Hosts the GlazyBench dataset (16,781 recipes). Used automatically by our data loader to build the Faiss K-NN index. | Auto-downloaded |
 
 All keys are supplied via environment variables — see [Setup](#setup) below. No service is called from the frontend directly; all external API calls happen server-side in `backend/`.
 

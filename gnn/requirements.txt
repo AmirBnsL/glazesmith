@@ -1,3 +1,5 @@
+# GNN experimental module — requires PyTorch with ROCm backend for GPU training
+# Install ROCm PyTorch: pip install torch --index-url https://download.pytorch.org/whl/rocm6.3
 torch>=2.1.0
 torch-geometric>=2.6.0
 pyg-lib
