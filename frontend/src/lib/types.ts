@@ -14,11 +14,11 @@ export interface RecipeAdjustment {
   material: string;
   delta_percentage: number;
   action: "increase" | "decrease" | "introduce" | "remove";
-  verified_cte?: number;
-  verified_surface?: string;
-  verified_transparency?: string;
-  verified_crazing_risk?: number;
-  recommendation?: "recommended" | "not_recommended" | "unverified";
+  verified_cte?: number | null;
+  verified_surface?: string | null;
+  verified_transparency?: string | null;
+  verified_crazing_risk?: number | null;
+  recommendation?: "recommended" | "not_recommended" | "unverified" | null;
 }
 
 export interface Remediation {
@@ -80,4 +80,23 @@ export interface PredictResponse {
   render_output_url: string;
   nearest_neighbours: NeighbourInfo[];
   optimizer_candidates?: OptimizerCandidate[];
+}
+
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+  verified_adjustments?: RecipeAdjustment[];
+}
+
+export interface ChatRequest {
+  message: string;
+  history: ChatMessage[];
+  recipe: RecipeIngredient[];
+  context: Record<string, any>;
+}
+
+export interface ChatResponse {
+  reply: string;
+  verified_adjustments: RecipeAdjustment[];
+  verification_summary: string;
 }

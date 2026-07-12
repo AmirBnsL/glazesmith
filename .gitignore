@@ -1,14 +1,102 @@
+# ========================
+# Dependencies
+# ========================
 node_modules/
-.next/
+
+# ========================
+# Python
+# ========================
 *.pyc
 __pycache__/
-.env
 venv/
 .venv/
-*.pkl
-!backend/app/models/*.pkl
-*.pt
-*.safetensors
-.DS_Store
+*.egg-info/
+
+# ========================
+# Environment variables
+# ========================
+.env
+.env.local
+.env.*.local
+
+# ========================
+# Next.js
+# ========================
+.next/
+out/
 next-env.d.ts
+
+# ========================
+# Build / Cache
+# ========================
 *.tsbuildinfo
+dist/
+build/
+
+# ========================
+# ML Model weights & data
+# ========================
+*.pkl
+*.pt
+*.pth
+*.onnx
+*.safetensors
+*.h5
+*.hdf5
+!backend/app/models/*.pkl
+
+# ========================
+# 3D model files (heavy)
+# ========================
+frontend/3D/
+*.fbx
+*.obj
+*.stl
+
+# ========================
+# Reference / scraped images
+# ========================
+frontend/reference/images/
+frontend/reference/*.jpg
+frontend/reference/*.png
+
+# ========================
+# Scratch / temp files
+# ========================
+frontend/scratch_*
+frontend/later_feat.txt
+
+# ========================
+# OS files
+# ========================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ========================
+# IDE
+# ========================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ========================
+# Docker
+# ========================
+*.log
+docker-compose.override.yml
+
+# ========================
+# Jupyter Notebooks outputs
+# ========================
+.ipynb_checkpoints/
+
+# ========================
+# Misc
+# ========================
+*.zip
+*.tar.gz
+*.rar
+*.7z

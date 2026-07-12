@@ -27,3 +27,16 @@ export async function generateImage(req: GenerateImageRequest): Promise<Generate
   }
   return res.json();
 }
+
+export async function chatWithAgent(req: import("./types").ChatRequest): Promise<import("./types").ChatResponse> {
+  const res = await fetch(`${BASE}/api/chat`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(req),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Chat API error (${res.status}): ${err}`);
+  }
+  return res.json();
+}
