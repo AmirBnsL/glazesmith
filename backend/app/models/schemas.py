@@ -93,6 +93,25 @@ class GlazeMetrics(BaseModel):
     color_family: str
 
 
+class ChatMessage(BaseModel):
+    role: Literal["user", "assistant"]
+    content: str
+    verified_adjustments: list[RecipeAdjustment] = Field(default_factory=list)
+
+
+class ChatRequest(BaseModel):
+    message: str
+    history: list[ChatMessage] = Field(default_factory=list)
+    recipe: list[RecipeIngredient]
+    context: dict  # prediction context: metrics, stull_coordinates, remediation, neighbours, etc.
+
+
+class ChatResponse(BaseModel):
+    reply: str
+    verified_adjustments: list[RecipeAdjustment] = Field(default_factory=list)
+    verification_summary: str = ""
+
+
 class PredictResponse(BaseModel):
     status: str
     timestamp: str

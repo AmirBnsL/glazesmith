@@ -117,6 +117,70 @@ Atmosphere: {atmosphere}
 Provide a detailed chemical analysis referencing the provided metrics and neighbour recipes, and suggest specific recipe adjustments to optimize the formulation."""
 
 
+CHAT_SYSTEM_PROMPT = """Return ONLY a raw JSON object. No markdown, no backticks, no explanation, no reasoning before or after. The entire response must be parseable by json.loads().
+
+You are a conversational ceramic glaze chemistry communicator. You have access to pre-computed diagnostic data for the user's current recipe. Answer the user's questions conversationally.
+
+When the user asks about changing the recipe or tries a "what if" scenario, include a "recipe_adjustments" array in your JSON so the system can verify the suggestions through the real engine.
+
+{"reply": "string — your conversational response to the user", "recipe_adjustments": [{"material": "string", "delta_percentage": number, "action": "increase|decrease|introduce|remove"}], "verification_summary": ""}
+
+- max 5 adjustments
+- If the user isn't asking about recipe changes, omit recipe_adjustments (empty array)
+- You interpret metrics, you do not calculate or predict"""
+
+
+def build_chat_context(context: dict) -> str:
+    metrics = context.get("metrics", {})
+    remediation = context.get("remediation", {})
+    stull = context.get("stull_coordinates", {})
+    neighbours = context.get("nearest_neighbours", [])
+    optimizer = context.get("optimizer_candidates", [])
+
+    parts = [f"""You are currently analyzing a ceramic glaze formulation for the user. Here are the pre-computed metrics:
+
+## Glaze Metrics
+Original CTE: {metrics.get('original_cte', 'unknown'):.4e} /°C
+Target CTE Max: {metrics.get('target_cte_max', 'unknown'):.4e} /°C
+Crazing Risk: {metrics.get('crazing_risk', 'unknown')}
+Surface: {metrics.get('finish', 'unknown')}
+Transparency: {metrics.get('transparency', 'unknown')}
+Color Family: {metrics.get('color_family', 'unknown')}
+
+## Stull Coordinates
+Alumina: {stull.get('x_alumina', 'unknown')}
+Silica: {stull.get('y_silica', 'unknown')}
+Zone: {stull.get('classification_zone', 'unknown')}"""]
+
+    if remediation:
+        analysis = remediation.get("chemical_analysis", "")
+        adjustments = remediation.get("recipe_adjustments", [])
+        parts.append(f"## Initial Remediation Analysis\n{analysis}")
+        if adjustments:
+            adj_lines = []
+            for adj in adjustments[:5]:
+                vcte = adj.get("verified_cte")
+                vcte_str = f"{vcte:.4e}" if vcte else "unverified"
+                rec = adj.get("recommendation", "unverified")
+                adj_lines.append(f"  - {adj.get('action')} {adj.get('material')} by {adj.get('delta_percentage')}% → CTE: {vcte_str}, recommendation: {rec}")
+            parts.append("### Suggested Adjustments\n" + "\n".join(adj_lines))
+
+    if neighbours:
+        nb_lines = []
+        for n in neighbours[:5]:
+            nb_lines.append(f"  #{n.get('rank')}: {n.get('recipe_name')} (similarity {n.get('cosine_similarity', 0):.2f}, surface={n.get('surface')}, color={n.get('color_family')})")
+        parts.append("## Nearest Neighbours\n" + "\n".join(nb_lines))
+
+    if optimizer:
+        opt_lines = []
+        for idx, c in enumerate(optimizer[:3], 1):
+            recipe_str = ", ".join(f"{ing['material']} {ing['percentage']}%" for ing in c.get("recipe", []))
+            opt_lines.append(f"  Candidate #{idx}: {recipe_str} — stress_delta={c.get('stress_delta', 0):.4e}, surface={c.get('surface_class', 'unknown')}, score={c.get('score', 0):.3f}")
+        parts.append("## Optimizer Candidates\n" + "\n".join(opt_lines))
+
+    return "\n\n".join(parts)
+
+
 def build_verification_prompt(
     original_data: dict,
     verified_adjustments: list[dict],

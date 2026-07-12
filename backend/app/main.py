@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .routes.predict import router as predict_router
+from .routes.chat import router as chat_router
 from .config import settings
 
 app = FastAPI(
@@ -18,6 +19,7 @@ app.add_middleware(
 )
 
 app.include_router(predict_router)
+app.include_router(chat_router)
 
 
 @app.get("/health")

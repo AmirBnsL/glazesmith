@@ -6,7 +6,7 @@ from typing import Any
 from openai import OpenAI, APIError, RateLimitError
 from pydantic import ValidationError
 from ..config import settings
-from .prompts import SYSTEM_PROMPT, STRICT_PROMPT, VERIFICATION_SYSTEM_PROMPT, build_analysis_prompt, build_verification_prompt
+from .prompts import SYSTEM_PROMPT, STRICT_PROMPT, VERIFICATION_SYSTEM_PROMPT, CHAT_SYSTEM_PROMPT, build_analysis_prompt, build_chat_context, build_verification_prompt
 from .tools import verify_adjustment
 
 logger = logging.getLogger(__name__)
@@ -133,6 +133,121 @@ class FireworksAgent:
             "expected_new_cte": final_cte,
             "verification_summary": verification_summary,
         }
+
+    def chat(
+        self,
+        message: str,
+        history: list[dict],
+        context: dict,
+        original_recipe: list[dict],
+        cone_min: float = 6.0,
+        cone_max: float = 6.0,
+        atmosphere: str = "oxidation",
+    ) -> dict:
+        """Conversational turn — user message + glaze context → LLM response + optional verified adjustments."""
+        context_block = build_chat_context(context)
+        system_content = f"{CHAT_SYSTEM_PROMPT}\n\n## Current Glaze Context\n{context_block}"
+
+        messages = [{"role": "system", "content": system_content}]
+        for msg in history[-20:]:
+            messages.append({"role": msg["role"], "content": msg["content"]})
+        messages.append({"role": "user", "content": message})
+
+        result = self._chat_call_llm(messages)
+        if not result:
+            return {"reply": "I'm sorry, I couldn't process that. Please try rephrasing your question.", "verified_adjustments": [], "verification_summary": ""}
+
+        reply = result.get("reply", "")
+        raw_adjustments = result.get("recipe_adjustments", [])
+        if not isinstance(raw_adjustments, list):
+            raw_adjustments = []
+
+        verified_adjustments = []
+        for adj in raw_adjustments[:5]:
+            material = adj.get("material", "")
+            delta = adj.get("delta_percentage", 0)
+            action = adj.get("action", "")
+
+            verified = verify_adjustment(
+                original_recipe, adj,
+                cone_min=cone_min, cone_max=cone_max, atmosphere=atmosphere,
+            )
+            entry = {
+                "material": material,
+                "delta_percentage": delta,
+                "action": action,
+                "recommendation": "unverified",
+            }
+            if verified:
+                orig_cte = context.get("metrics", {}).get("original_cte", 0)
+                new_cte = verified["verified_cte"]
+                improved = new_cte < orig_cte
+                entry["verified_cte"] = verified["verified_cte"]
+                entry["verified_surface"] = verified["verified_surface"]
+                entry["verified_transparency"] = verified["verified_transparency"]
+                entry["verified_crazing_risk"] = verified["verified_crazing_risk"]
+                entry["recommendation"] = "recommended" if improved else "not_recommended"
+            verified_adjustments.append(entry)
+
+        improved_count = sum(1 for v in verified_adjustments if v.get("recommendation") == "recommended")
+        verification_summary = (
+            f"Verified {len(verified_adjustments)} adjustment(s): "
+            f"{improved_count} recommended, "
+            f"{len(verified_adjustments) - improved_count} not recommended."
+            if verified_adjustments else ""
+        )
+
+        return {
+            "reply": reply,
+            "verified_adjustments": verified_adjustments,
+            "verification_summary": verification_summary,
+        }
+
+    def _chat_call_llm(self, messages: list[dict]) -> dict | None:
+        last_error = ""
+        for attempt in range(MAX_RETRIES):
+            try:
+                response = self.client.chat.completions.create(
+                    model=settings.llm_model,
+                    messages=messages,
+                    response_format={"type": "json_object"},
+                    temperature=0.3,
+                    max_tokens=8192,
+                )
+
+                finish = getattr(response.choices[0], "finish_reason", "unknown")
+                usage = getattr(response, "usage", None)
+                if usage:
+                    logger.info(
+                        "Chat LLM call (attempt=%d): prompt=%d, completion=%d, total=%d, finish=%s",
+                        attempt, usage.prompt_tokens, usage.completion_tokens, usage.total_tokens, finish,
+                    )
+
+                content = response.choices[0].message.content or ""
+                first_brace = content.find("{")
+                last_brace = content.rfind("}")
+                if first_brace != -1 and last_brace > first_brace:
+                    json_str = content[first_brace : last_brace + 1]
+                    try:
+                        parsed = json.loads(json_str)
+                        return {
+                            "reply": parsed.get("reply", ""),
+                            "recipe_adjustments": parsed.get("recipe_adjustments", []),
+                        }
+                    except json.JSONDecodeError:
+                        pass
+
+                last_error = "Malformed JSON response"
+                if attempt < MAX_RETRIES - 1:
+                    time.sleep(1.5 ** (attempt + 1))
+
+            except (APIError, RateLimitError) as e:
+                last_error = str(e)
+                if attempt < MAX_RETRIES - 1:
+                    time.sleep(1.5 ** (attempt + 1))
+
+        logger.warning("Chat LLM call failed after %d retries: %s", MAX_RETRIES, last_error)
+        return None
 
     def _call_llm(self, prompt: str, is_verification: bool = False) -> dict | None:
         last_error = ""
